@@ -26,7 +26,7 @@
 			}).addTo(map);
 
         // Add a layer control
-//        var layerControl = L.control.layers().addTo(map);
+        var layerControl = L.control.layers().addTo(map);
 
       //  var legendControl = L.control.legend({
     //        autoAdd: false
@@ -57,28 +57,27 @@
            // console.log("Got coords! " + location.text + " = " + location.center);
             return location;
         };
-
-        for(var i=0; i<2; i++) {
+       for(var i=0; i<schoolData.length; i++) {
             if (schoolData[i].lat) {
-                // var group = L.layerGroup();
+                var group = L.layerGroup();
                 for(var l=0; l<schoolData.length; l++){
                    if (schoolData[l].lat && l != i) {
                        var arcedPolyline = new L.ArcedPolyline([[schoolData[i].lat,schoolData[i].lng],[schoolData[l].lat,schoolData[l].lng] ], {
                                             //        distanceToHeight: new L.LinearFunction([0, 0], [4000, 400]),
                                                   color: '#4A7FFB', fillcolor: '#4A7FFB',
-                                                weight: 2
+                                                weight: 1
                                         });
-                        console.log(arcedPolyline);
-                        map.addLayer(arcedPolyline);
-                      // group.addLayer(arcedPolyline);
+                       // map.addLayer(arcedPolyline);
+                        group.addLayer(arcedPolyline);
                    }
                 }
-              //  group.addTo(map);
-                console.log("Done " + schoolData[i].kratk_name);
+                layerControl.addOverlay(group, schoolData[i].kratk_name);
+                if(i===0) { group.addTo(map); }
+            //    console.log("Done " + schoolData[i].kratk_name);
             }
         }
 
-        /*
+/*
         for(var i=0; i<2; i++) {
           if (schoolData[i].lat) {
             L.marker([schoolData[i].lat, schoolData[i].lng]).addTo(map);
