@@ -7,6 +7,8 @@
 	<script src="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js"></script>
 		
 	<script src="schools_data.js"></script>
+    <script src="school1562.js"></script>
+    <script src="contract_data2.js"></script>
 
     <link rel="stylesheet" href="leaflet-dvf/dist/css/dvf.css" type="text/css" />
     <script type="text/javascript" src="leaflet-dvf/dist/leaflet-dvf.min.js"></script>
@@ -57,10 +59,57 @@
            // console.log("Got coords! " + location.text + " = " + location.center);
             return location;
         };
+
+    //   console.log("======" + school1562.length)
        for(var i=0; i<schoolData.length; i++) {
             if (schoolData[i].lat) {
                 var group = L.layerGroup();
-                for(var l=0; l<schoolData.length; l++){
+                var options= {
+                    data: {
+
+                    },
+                    chartOptions: {
+
+                    },
+                    weight: 4,
+                    radius: 22,
+                    fillOpacity: 0.7,
+                    rotation: 0.0,
+                    position: {
+                        x: 0,
+                        y: 0
+                    },
+                    offset: 20,
+                    width: 22
+                };
+
+                for(var k = 0; k< contdata.length; k++) {
+                    if(contdata.kpp === schoolData[i].kpp) {
+                        console.log("GOTS");
+                                options.data["'" + condata[k].postAddress+ "'"] = condata[k].price;
+                                options.chartOptions["'"+ condata[k].postAddress+ "'"] =
+                                    { fillColor: new L.HSLHueFunction(new L.Point(50000, 60), new L.Point(100000000, 0)),
+                                        color : new L.HSLHueFunction(new L.Point(50000, 60), new L.Point(100000000, 0)),
+                                         minValue: 0,
+                                        maxValue: 100000000
+                                        // ,displayText: function() { return school1562[k].postAddress; }
+                                        } ;
+                                var arcedPolyline = new L.ArcedPolyline([[schoolData[i].lat,schoolData[i].lng],
+                                    [contdata[k].seller_lat,contdata[k].seller_lng] ], {
+                                //        distanceToHeight: new L.LinearFunction([0, 0], [4000, 400]),
+                                        color: '#4A7FFB', fillcolor: '#4A7FFB',
+                                         weight: 1
+                                        });
+
+                                group.addLayer(arcedPolyline);
+                    }
+                }
+                // console.log(options);
+                var marker = new L.PieChartMarker(new L.LatLng(schoolData[i].lat,schoolData[i].lng),
+                               options).addTo(map);
+                //group.addLayer(marker);
+
+              /*   for(var l=0; l<schoolData.length; l++){
                    if (schoolData[l].lat && l != i) {
                        var arcedPolyline = new L.ArcedPolyline([[schoolData[i].lat,schoolData[i].lng],[schoolData[l].lat,schoolData[l].lng] ], {
                                             //        distanceToHeight: new L.LinearFunction([0, 0], [4000, 400]),
@@ -70,12 +119,12 @@
                        // map.addLayer(arcedPolyline);
                         group.addLayer(arcedPolyline);
                    }
-                }
-                layerControl.addOverlay(group, schoolData[i].kratk_name);
+                }*/
+                if (group.getLayers()) {
+                        layerControl.addOverlay(group, schoolData[i].kratk_name);}
                 if(i===0) { group.addTo(map); }
             //    console.log("Done " + schoolData[i].kratk_name);
-            }
-        }
+            }}
 
 /*
         for(var i=0; i<2; i++) {
