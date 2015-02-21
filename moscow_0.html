@@ -1,0 +1,157 @@
+﻿<html>
+<head>
+	<title>Московские школы</title>
+	<meta charset="utf-8">
+	
+	<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.css" />
+	<script src="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js"></script>
+		
+	<script src="schools_data.js"></script>
+
+    <link rel="stylesheet" href="leaflet-dvf/dist/css/dvf.css" type="text/css" />
+    <script type="text/javascript" src="leaflet-dvf/dist/leaflet-dvf.min.js"></script>
+
+    <script type="text/javascript" src="leaflet-dvf/src/leaflet.dvf.experimental.js"></script>
+
+</head>
+<body>
+	<div id="map" style="height: 100%;"> </div>
+	<script>
+		var map = L.map('map').setView([55.75, 37.63], 10);
+		L.tileLayer('https://{s}.tiles.mapbox.com/v3/{id}/{z}/{x}/{y}.png',
+			{maxZoom: 18, 
+			attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ' + 
+			'<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
+			'Imagery © <a href="http://mapbox.com">Mapbox</a>', id: 'examples.map-i875mjb7'
+			}).addTo(map);
+
+        // Add a layer control
+//        var layerControl = L.control.layers().addTo(map);
+
+      //  var legendControl = L.control.legend({
+    //        autoAdd: false
+     //   }).addTo(map);
+
+
+        var getSchoolByName= function(name) {
+            for(var i=0; i<schoolData.length; i++) {
+                if(schoolData[i].label == name) {
+                    return schoolData[i]; }
+            }
+        }
+
+        var getLocation = function (context, locationField, fieldValues, callback) {
+            var key = fieldValues[0];
+            var school = getSchoolByName(key);
+            var location;
+
+            if (school) {
+                var latlng = new L.LatLng(Number(school.lat), Number(school.lng));
+
+                location = {
+                    location: latlng,
+                    text: key,
+                    center: latlng
+                };
+            }
+           // console.log("Got coords! " + location.text + " = " + location.center);
+            return location;
+        };
+
+        for(var i=0; i<2; i++) {
+            if (schoolData[i].lat) {
+                // var group = L.layerGroup();
+                for(var l=0; l<schoolData.length; l++){
+                   if (schoolData[l].lat && l != i) {
+                       var arcedPolyline = new L.ArcedPolyline([[schoolData[i].lat,schoolData[i].lng],[schoolData[l].lat,schoolData[l].lng] ], {
+                                            //        distanceToHeight: new L.LinearFunction([0, 0], [4000, 400]),
+                                                  color: '#4A7FFB', fillcolor: '#4A7FFB',
+                                                weight: 2
+                                        });
+                        console.log(arcedPolyline);
+                        map.addLayer(arcedPolyline);
+                      // group.addLayer(arcedPolyline);
+                   }
+                }
+              //  group.addTo(map);
+                console.log("Done " + schoolData[i].kratk_name);
+            }
+        }
+
+        /*
+        for(var i=0; i<2; i++) {
+          if (schoolData[i].lat) {
+            L.marker([schoolData[i].lat, schoolData[i].lng]).addTo(map);
+            var key = schoolData[i].label;
+            console.log("-----------------------------------Going for key " +key);
+
+            var connectLayer = new L.Graph(schoolData, {
+                recordsField: null,
+                locationMode: L.LocationModes.CUSTOM,
+                fromField: 'label',
+                toField: 'label',
+                codeField: null,
+                getLocation: getLocation,
+                getEdge: L.Graph.EDGESTYLE.ARC,
+                includeLayer: function (record) {
+                    return record.label != key;
+                },
+                setHighlight: function (style) {
+                    style.opacity = 1.0;
+
+                    return style;
+                },
+                unsetHighlight: function (style) {
+                    style.opacity = 0.8;
+
+                    return style;
+                },
+                layerOptions: {
+                    fill: false,
+                    opacity: 0.8,
+                    weight: 0.5,
+                    fillOpacity: 1.0,
+                    distanceToHeight: new L.LinearFunction([0, 5], [1000, 200])
+                },
+                legendOptions: {
+                    width: 200,
+                    numSegments: 5,
+                    className: 'legend-line'
+                },
+                tooltipOptions: {
+                    iconSize: new L.Point(80, 64),
+                    iconAnchor: new L.Point(-5, 64),
+                    className: 'leaflet-div-icon line-legend'
+               },
+                displayOptions: {
+                    cnt: {
+                        weight: new L.LinearFunction([0, 1], [schoolData.length, 14]),
+                        color: new L.HSLHueFunction([0, 200], [schoolData.length, 330], {
+                            outputLuminosity: '60%'
+                        }), displayname: schoolData[i].kratk_name,
+                    displaytext: schoolData[i].kratk_name}
+//
+ //
+ //               },
+ //               onEachRecord: function (layer, record) {
+ //                   layer.bindPopup($(L.HTMLUtils.buildTable(record)).wrap('<div/>').parent().html());
+                }
+            });
+
+            layerControl.addOverlay(connectLayer, key);
+	    console.log("---------------------------finished key " +key );
+
+            if(i==0) {
+           //     legendControl.addLayer(connectLayer);
+
+                map.addLayer(connectLayer);
+                }
+          }
+        }
+*/
+
+
+
+
+    </script>
+</body></html>
