@@ -84,10 +84,10 @@
                 };
 
                 for(var k = 0; k< contdata.length; k++) {
-                    if(contdata.kpp === schoolData[i].kpp) {
-                        console.log("GOTS");
-                                options.data["'" + condata[k].postAddress+ "'"] = condata[k].price;
-                                options.chartOptions["'"+ condata[k].postAddress+ "'"] =
+                    if(contdata[k].kpp === schoolData[i].kpp) {
+
+                                options.data["'" + contdata[k].postAddress+ "'"] = contdata[k].price;
+                                options.chartOptions["'"+ contdata[k].postAddress+ "'"] =
                                     { fillColor: new L.HSLHueFunction(new L.Point(50000, 60), new L.Point(100000000, 0)),
                                         color : new L.HSLHueFunction(new L.Point(50000, 60), new L.Point(100000000, 0)),
                                          minValue: 0,
@@ -106,8 +106,8 @@
                 }
                 // console.log(options);
                 var marker = new L.PieChartMarker(new L.LatLng(schoolData[i].lat,schoolData[i].lng),
-                               options).addTo(map);
-                //group.addLayer(marker);
+                               options);
+                group.addLayer(marker);
 
               /*   for(var l=0; l<schoolData.length; l++){
                    if (schoolData[l].lat && l != i) {
