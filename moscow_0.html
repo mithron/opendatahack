@@ -74,8 +74,7 @@
                 };
 
                 for(var k = 0; k <contdata.length; k++) {
-                    if(contdata[k].kpp === schoolData[i].kpp) {
-                        console.log("GOTS");
+                    if(contdata[k].kpp === schoolData[i].kpp) {                       
                         options.data["'" + contdata[k].postAddress+ "'"] = contdata[k].price;
                         options.chartOptions["'"+ contdata[k].postAddress+ "'"] =
                            { fillColor: new L.HSLHueFunction(new L.Point(50000, 60), new L.Point(100000000, 0)),
@@ -95,21 +94,9 @@
                 }                
                 var marker = new L.PieChartMarker(new L.LatLng(schoolData[i].lat,schoolData[i].lng),
                                options);
-                group.addLayer(marker);
-
-              /*   for(var l=0; l<schoolData.length; l++){
-                   if (schoolData[l].lat && l != i) {
-                       var arcedPolyline = new L.ArcedPolyline([[schoolData[i].lat,schoolData[i].lng],[schoolData[l].lat,schoolData[l].lng] ], {
-                                            //        distanceToHeight: new L.LinearFunction([0, 0], [4000, 400]),
-                                                  color: '#4A7FFB', fillcolor: '#4A7FFB',
-                                                weight: 1
-                                        });
-                       // map.addLayer(arcedPolyline);
-                        group.addLayer(arcedPolyline);
-                   }
-                }*/
+                group.addLayer(marker);             
 				console.log("Group " + schoolData[i].kratk_name);
-				console.log("group.getLayers()");
+				console.log(group.getLayers());
                 if (group.getLayers()) {
                         layerControl.addOverlay(group, schoolData[i].kratk_name);}
                 if(i===0) { group.addTo(map); }
