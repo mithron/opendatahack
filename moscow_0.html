@@ -5,14 +5,13 @@
 	
 	<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.css" />
 	<script src="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js"></script>
-		
+
 	<script src="schools_data.js"></script>
     <script src="school1562.js"></script>
     <script src="contract_data2.js"></script>
 
     <link rel="stylesheet" href="leaflet-dvf/dist/css/dvf.css" type="text/css" />
     <script type="text/javascript" src="leaflet-dvf/dist/leaflet-dvf.min.js"></script>
-
     <script type="text/javascript" src="leaflet-dvf/src/leaflet.dvf.experimental.js"></script>
 
 </head>
@@ -30,11 +29,12 @@
         // Add a layer control
         var layerControl = L.control.layers().addTo(map);
 
-      //  var legendControl = L.control.legend({
-    //        autoAdd: false
+     //  var legendControl = L.control.legend({
+     //        autoAdd: false
      //   }).addTo(map);
 
-
+	// utility functions - not needed now
+	
         var getSchoolByName= function(name) {
             for(var i=0; i<schoolData.length; i++) {
                 if(schoolData[i].label == name) {
@@ -42,6 +42,8 @@
             }
         }
 
+		// strange function for getting location for layer L.Graph
+		
         var getLocation = function (context, locationField, fieldValues, callback) {
             var key = fieldValues[0];
             var school = getSchoolByName(key);
@@ -64,50 +66,36 @@
        for(var i=0; i<schoolData.length; i++) {
             if (schoolData[i].lat) {
                 var group = L.layerGroup();
-                var options= {
-                    data: {
-
-                    },
-                    chartOptions: {
-
-                    },
-                    weight: 4,
-                    radius: 22,
-                    fillOpacity: 0.7,
-                    rotation: 0.0,
-                    position: {
-                        x: 0,
-                        y: 0
-                    },
+                var options= { data: { }, chartOptions: {},
+                    weight: 4, radius: 30, fillOpacity: 0.7, 
+                    rotation: 0.0, position: { x: 0, y: 0 },
                     offset: 20,
-                    width: 22
+                    width: 30
                 };
 
-                for(var k = 0; k< contdata.length; k++) {
-                    if(contdata.kpp === schoolData[i].kpp) {
+                for(var k = 0; k <contdata.length; k++) {
+                    if(contdata[k].kpp === schoolData[i].kpp) {
                         console.log("GOTS");
-                                options.data["'" + condata[k].postAddress+ "'"] = condata[k].price;
-                                options.chartOptions["'"+ condata[k].postAddress+ "'"] =
-                                    { fillColor: new L.HSLHueFunction(new L.Point(50000, 60), new L.Point(100000000, 0)),
-                                        color : new L.HSLHueFunction(new L.Point(50000, 60), new L.Point(100000000, 0)),
-                                         minValue: 0,
-                                        maxValue: 100000000
-                                        // ,displayText: function() { return school1562[k].postAddress; }
-                                        } ;
-                                var arcedPolyline = new L.ArcedPolyline([[schoolData[i].lat,schoolData[i].lng],
+                        options.data["'" + contdata[k].postAddress+ "'"] = contdata[k].price;
+                        options.chartOptions["'"+ contdata[k].postAddress+ "'"] =
+                           { fillColor: new L.HSLHueFunction(new L.Point(50000, 60), new L.Point(100000000, 0)),
+                             color : new L.HSLHueFunction(new L.Point(50000, 60), new L.Point(100000000, 0)),
+                             minValue: 0, maxValue: 100000000
+                             // ,displayText: function() { return school1562[k].postAddress; }
+                            } ;
+                        var arcedPolyline = new L.ArcedPolyline([[schoolData[i].lat,schoolData[i].lng],
                                     [contdata[k].seller_lat,contdata[k].seller_lng] ], {
                                 //        distanceToHeight: new L.LinearFunction([0, 0], [4000, 400]),
                                         color: '#4A7FFB', fillcolor: '#4A7FFB',
                                          weight: 1
                                         });
 
-                                group.addLayer(arcedPolyline);
+                        group.addLayer(arcedPolyline);
                     }
-                }
-                // console.log(options);
+                }                
                 var marker = new L.PieChartMarker(new L.LatLng(schoolData[i].lat,schoolData[i].lng),
-                               options).addTo(map);
-                //group.addLayer(marker);
+                               options);
+                group.addLayer(marker);
 
               /*   for(var l=0; l<schoolData.length; l++){
                    if (schoolData[l].lat && l != i) {
@@ -120,6 +108,8 @@
                         group.addLayer(arcedPolyline);
                    }
                 }*/
+				console.log("Group " + schoolData[i].kratk_name);
+				console.log("group.getLayers()");
                 if (group.getLayers()) {
                         layerControl.addOverlay(group, schoolData[i].kratk_name);}
                 if(i===0) { group.addTo(map); }
