@@ -36,7 +36,7 @@
       //  var options =
 
         var layerControl = L.Control.styledLayerControl(base, over, { collapsed:false, container_width: "200px",
-            container_maxHeight: "600px",  group_maxHeight: "600px", exclusive: false}).addTo(map);
+            container_maxHeight: "550px",  group_maxHeight: "550px", exclusive: false}).addTo(map);
 	
      //  var legendControl = L.control.legend({
      //        autoAdd: false
@@ -149,7 +149,7 @@
 			
                 if (group.getLayers() != 0) {
 						group.addLayer(marker); 
-                        layerControl.addOverlay(group, schoolData[i].kratk_name, {groupName : "Школы Москвы", expanded:true});
+                        layerControl.addBaseLayer(group, schoolData[i].kratk_name, {groupName : "Школы Москвы", expanded:true});
 				}
                 if(i===0 && group.getLayers() != 0) { group.addTo(map); }
              }}
