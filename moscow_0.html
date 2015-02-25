@@ -6,17 +6,21 @@
 	<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.css" />
 	<script src="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js"></script>
 
-	<script src="schools_data.js"></script>
-    <script src="school1562.js"></script>
+	<script src="schools_data.js"></script>    
     <script src="contract_data2.js"></script>
 
     <link rel="stylesheet" href="leaflet-dvf/dist/css/dvf.css" type="text/css" />
     <script type="text/javascript" src="leaflet-dvf/dist/leaflet-dvf.min.js"></script>
     <script type="text/javascript" src="leaflet-dvf/src/leaflet.dvf.experimental.js"></script>
+	
+	
 
 </head>
 <body>
-	<div id="map" style="height: 100%;"> </div>
+	<div id="all" style="height: 100%;  overflow: hidden;" > 
+	<div id="interface" style="height: 100%; width: 20%; float:left;"></div>	
+	<div id="map" style="height: 100%; width: 80% ; float:left;"> </div>
+	</div>
 	<script>
 		var map = L.map('map').setView([55.75, 37.63], 10);
 		L.tileLayer('https://{s}.tiles.mapbox.com/v3/{id}/{z}/{x}/{y}.png',
