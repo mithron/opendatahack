@@ -13,6 +13,10 @@
     <script type="text/javascript" src="leaflet-dvf/dist/leaflet-dvf.min.js"></script>
     <script type="text/javascript" src="leaflet-dvf/src/leaflet.dvf.experimental.js"></script>
 
+    <link rel="stylesheet" href="Leaflet.StyledLayerControl/css/styledLayerControl.css" />
+    <script src="Leaflet.StyledLayerControl//src/styledLayerControl.js"></script>
+
+
 </head>
 <body>
 	<div id="map" style="height: 100%;"> </div>
@@ -26,7 +30,13 @@
 			}).addTo(map);
 
         // Add a layer control
-        var layerControl = L.control.layers().addTo(map);
+        var base = [];
+        var over = [];
+       // var layerControl = L.control.layers(base, over, {collapsed: false}).addTo(map);
+      //  var options =
+
+        var layerControl = L.Control.styledLayerControl(base, over, { collapsed:false, container_width: "200px",
+            container_maxHeight: "600px",  group_maxHeight: "600px", exclusive: false}).addTo(map);
 	
      //  var legendControl = L.control.legend({
      //        autoAdd: false
@@ -80,8 +90,8 @@
 							}
 						});
 		
-        //   for(var i=0; i<schoolData.length; i++) {
-	     for(var i=0; i<10; i++) {
+          for(var i=0; i<schoolData.length; i++) {
+	   //  for(var i=0; i<10; i++) {
             if (schoolData[i].lat) {
                 var group = L.layerGroup();
                 var options= { data: { }, chartOptions: {},
@@ -139,7 +149,7 @@
 			
                 if (group.getLayers() != 0) {
 						group.addLayer(marker); 
-                        layerControl.addOverlay(group, schoolData[i].kratk_name);
+                        layerControl.addOverlay(group, schoolData[i].kratk_name, {groupName : "Школы Москвы", expanded:true});
 				}
                 if(i===0 && group.getLayers() != 0) { group.addTo(map); }
              }}
