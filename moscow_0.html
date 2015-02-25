@@ -13,6 +13,9 @@
     <link rel="stylesheet" href="leaflet-dvf/dist/css/dvf.css" type="text/css" />
     <script type="text/javascript" src="leaflet-dvf/dist/leaflet-dvf.min.js"></script>
     <script type="text/javascript" src="leaflet-dvf/src/leaflet.dvf.experimental.js"></script>
+	
+	<link rel="stylesheet" href="Leaflet.NavBar/src/Leaflet.NavBar.css" />
+	<script src="Leaflet.NavBar/src/Leaflet.NavBar.js"></script> 
 
 </head>
 <body>
@@ -28,7 +31,9 @@
 
         // Add a layer control
         var layerControl = L.control.layers().addTo(map);
-	
+		
+		var navbar = L.control.navbar({center:[55.75, 37.63], zoom:10}).addTo(map);
+
      //  var legendControl = L.control.legend({
      //        autoAdd: false
      //   }).addTo(map);
