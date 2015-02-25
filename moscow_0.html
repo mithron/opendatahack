@@ -62,11 +62,14 @@
             return location;
         };
 
-	    var lineWeight = new L.LinearFunction(new L.Point(50000, 1), new L.Point(1000000, 10));
-		var lineColor1m = new L.HSLHueFunction(new L.Point(50000, 120), new L.Point(1000000, 25), {outputLuminosity: '100%'});
-		var lineColor50m = new L.HSLHueFunction(new L.Point(1000000, 25), new L.Point(50000000, 20), {outputLuminosity: '100%'});
+	    var lineWeight1m = new L.LinearFunction(new L.Point(50000, 1), new L.Point(1000000, 14));
+		var lineWeight50m = new L.LinearFunction(new L.Point(1000001, 14), new L.Point(50000000, 20));
+		var lineColor1m = new L.HSLHueFunction(new L.Point(50000, 120), new L.Point(1000000, 25), {outputLuminosity: '95%'});
+		var lineColor50m = new L.HSLHueFunction(new L.Point(1000001, 25), new L.Point(50000000, 20), {outputLuminosity: '95%'});
 
-		var lineColor = new L.PiecewiseFunction([lineColor1m, ]);
+		var lineColor = new L.PiecewiseFunction([lineColor1m, lineColor50m]);
+		var lineWeight = new L.PiecewiseFunction([lineWeight1m, lineWeight50m]);
+		
     //   console.log("======" + school1562.length)
     //   for(var i=0; i<schoolData.length; i++) {
 	     for(var i=0; i<10; i++) {
@@ -82,17 +85,27 @@
                 for(var k = 0; k <contdata.length; k++) {
                     if(contdata[k].kpp === schoolData[i].kpp) {                       
                         options.data["'" + contdata[k].postAddress+ "'"] = contdata[k].price;
+						var dataColor = lineColor.evaluate(contdata[k].price);
+						var text = "'" + contdata[k].postAddress+ "'";
+						var dataWeight = lineWeight.evaluate(contdata[k].price);
+						console.log(dataColor);
+						console.log(text);
+						console.log(dataWeight);
                         options.chartOptions["'"+ contdata[k].postAddress+ "'"] =
-                           { fillColor: lineColor,
-                             color: "#FFFFFF",
+                           { color: dataColor,
+                            fillcolor: dataColor,
+							fill: dataColor,
                              minValue: 0, maxValue: 50000000
-                             // ,displayText: function() { return school1562[k].postAddress; }
+                           //  ,displayText: text
                             } ;
                         var arcedPolyline = new L.ArcedPolyline([[schoolData[i].lat,schoolData[i].lng],
                                     [contdata[k].seller_lat,contdata[k].seller_lng] ], {
                                 //        distanceToHeight: new L.LinearFunction([0, 0], [4000, 400]),
-                                        color: '#4A7FFB', fillColor: '#4A7FFB',
-                                        weight: 1.25
+								        fillColor: '#4A7FFB', 
+										color: dataColor,                                	
+								//color: '#4A7FFB', fillColor: '#4A7FFB',
+								       weight: dataWeight
+                                 //       weight: 1.25
                                         });
 
                         group.addLayer(arcedPolyline);
