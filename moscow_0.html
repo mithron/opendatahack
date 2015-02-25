@@ -13,6 +13,9 @@
     <link rel="stylesheet" href="leaflet-dvf/dist/css/dvf.css" type="text/css" />
     <script type="text/javascript" src="leaflet-dvf/dist/leaflet-dvf.min.js"></script>
     <script type="text/javascript" src="leaflet-dvf/src/leaflet.dvf.experimental.js"></script>
+	
+	<link rel="stylesheet" href="Leaflet.NavBar/src/Leaflet.NavBar.css" />
+	<script src="Leaflet.NavBar/src/Leaflet.NavBar.js"></script> 
 
 </head>
 <body>
@@ -28,6 +31,8 @@
 
         // Add a layer control
         var layerControl = L.control.layers().addTo(map);
+		
+		var navbar = L.control.navbar({center:[55.75, 37.63], zoom:10}).addTo(map);
 
      //  var legendControl = L.control.legend({
      //        autoAdd: false
@@ -62,7 +67,7 @@
             return location;
         };
 
-	    var lineWeight1m = new L.LinearFunction(new L.Point(50000, 1), new L.Point(1000000, 14));
+		var lineWeight1m = new L.LinearFunction(new L.Point(50000, 1), new L.Point(1000000, 14));
 		var lineWeight50m = new L.LinearFunction(new L.Point(1000001, 14), new L.Point(50000000, 20));
 		var lineColor1m = new L.HSLHueFunction(new L.Point(50000, 120), new L.Point(1000000, 10), {outputLuminosity: '60%'});
 		var lineColor50m = new L.HSLHueFunction(new L.Point(1000001, 10), new L.Point(50000000, 0), {outputLuminosity: '60%'});
@@ -70,21 +75,30 @@
 		var lineColor = new L.PiecewiseFunction([lineColor1m, lineColor50m]);
 		var lineWeight = new L.PiecewiseFunction([lineWeight1m, lineWeight50m]);
 		
-		var firmColor = new L.HSLHueFunction(new L.Point(0, 260), new L.Point(contdata.length, 0), {outputLuminosity: '60%'});
+		var firmColor = new L.HSLHueFunction(new L.Point(0, 260), new L.Point(contdata.length, 0),
+						{outputLuminosity: '60%', oddity:0, preProcess: function(value) {
+							if (this.options.oddity == 1){
+								this.options.oddity = 0;
+								value = contdata.length - value;
+								return value;
+								}
+							else { this.options.oddity = 1; return value ;}							
+							}
+						});
 		
         //   for(var i=0; i<schoolData.length; i++) {
 	     for(var i=0; i<10; i++) {
             if (schoolData[i].lat) {
                 var group = L.layerGroup();
                 var options= { data: { }, chartOptions: {},
-                    weight: 1, radius: 30, fillOpacity: 1, 
+                    weight: 1, radius: 34, fillOpacity: 1, 
                     rotation: 0.0, position: { x: 0, y: 0 },
 				    tooltipOptions: {
 							iconSize: new L.Point(120, 100),
 							iconAnchor: new L.Point(-5, 64)
 							},
                     offset: 20,
-                    width: 30					
+                    width: 40					
                 };
 
                 for(var k = 0; k <contdata.length; k++) {
@@ -97,8 +111,7 @@
 						options.chartOptions["'"+ contdata[k].postAddress+ "'"] =
                            { color: dataColor,
                             fillcolor: dataColor,						
-                             minValue: 0, maxValue: 50000000
-                           //  ,displayText: text
+                             minValue: 0, maxValue: 50000000                         
                             } ;
                         var arcedPolyline = new L.ArcedPolyline([[schoolData[i].lat,schoolData[i].lng],
                                     [contdata[k].seller_lat,contdata[k].seller_lng] ], {
@@ -114,26 +127,28 @@
 								map.setView(e.target._latlngs[1], 14);
 								e.target.openPopup();
 						});
+						arcedPolyline.on("popupclose", function(e) { 						
+								map.setView([55.75, 37.63], 10);								
+						});
+						/*
 						arcedPolyline.on("mouseover", function(e) { 						
 								console.log(e.target);
 								
 						});
-
+*/
 
                         group.addLayer(arcedPolyline);
                     }
                 }                
                 var marker = new L.PieChartMarker(new L.LatLng(schoolData[i].lat,schoolData[i].lng),
                                options);                            
-				console.log("Group " + schoolData[i].kratk_name);
-				console.log(group.getLayers());
+			
                 if (group.getLayers() != 0) {
 						group.addLayer(marker); 
                         layerControl.addOverlay(group, schoolData[i].kratk_name);
 				}
                 if(i===0 && group.getLayers() != 0) { group.addTo(map); }
-            //    console.log("Done " + schoolData[i].kratk_name);
-            }}
+             }}
 
 /*
         for(var i=0; i<2; i++) {
