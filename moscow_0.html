@@ -13,9 +13,13 @@
     <script type="text/javascript" src="leaflet-dvf/dist/leaflet-dvf.min.js"></script>
     <script type="text/javascript" src="leaflet-dvf/src/leaflet.dvf.experimental.js"></script>
 
+    <link rel="stylesheet" href="Leaflet.StyledLayerControl/css/styledLayerControl.css" />
+    <script src="Leaflet.StyledLayerControl//src/styledLayerControl.js"></script>
+
+
 </head>
 <body>
-	<div id="map" style="height: 100%;"> </div>
+	<div id="map" style="height: 650px;"> </div>
 	<script>
 		var map = L.map('map').setView([55.75, 37.63], 10);
 		L.tileLayer('https://{s}.tiles.mapbox.com/v3/{id}/{z}/{x}/{y}.png',
@@ -26,7 +30,13 @@
 			}).addTo(map);
 
         // Add a layer control
-        var layerControl = L.control.layers().addTo(map);
+        var base = [];
+        var over = [];
+       // var layerControl = L.control.layers(base, over, {collapsed: false}).addTo(map);
+      //  var options =
+
+        var layerControl = L.Control.styledLayerControl(base, over, { collapsed:false, container_width: "200px",
+            container_maxHeight: "550px",  group_maxHeight: "550px", exclusive: false}).addTo(map);
 	
      //  var legendControl = L.control.legend({
      //        autoAdd: false
@@ -69,37 +79,40 @@
 		var lineColor = new L.PiecewiseFunction([lineColor1m, lineColor50m]);
 		var lineWeight = new L.PiecewiseFunction([lineWeight1m, lineWeight50m]);
 		
-		var firmColor = new L.HSLHueFunction(new L.Point(0, 260), new L.Point(contdata.length, 0),
-						{outputLuminosity: '60%', oddity:0, preProcess: function(value) {
+		var firmColor = new L.HSLHueFunction(new L.Point(0, 260), new L.Point(1024, 0),
+						{outputLuminosity: '40%', oddity:0, preProcess: function(value) {
 							if (this.options.oddity == 1){
 								this.options.oddity = 0;
-								value = contdata.length - value;
-								return value;
+								value = 1024 - value;
+                                if(value<0) {return 0-value;}
+                                else {	return value; }
 								}
 							else { this.options.oddity = 1; return value ;}							
 							}
 						});
 		
-        //   for(var i=0; i<schoolData.length; i++) {
-	     for(var i=0; i<10; i++) {
+          for(var i=0; i<schoolData.length; i++) {
+	   //  for(var i=0; i<10; i++) {
             if (schoolData[i].lat) {
                 var group = L.layerGroup();
+                var colorCounter = 0;
                 var options= { data: { }, chartOptions: {},
-                    weight: 1, radius: 34, fillOpacity: 1, 
+                    weight: 1, radius: 38, fillOpacity: 1,
                     rotation: 0.0, position: { x: 0, y: 0 },
 				    tooltipOptions: {
 							iconSize: new L.Point(120, 100),
 							iconAnchor: new L.Point(-5, 64)
 							},
                     offset: 20,
-                    width: 40					
+                    barThickness: 22
                 };
 
                 for(var k = 0; k <contdata.length; k++) {
                     if(contdata[k].kpp === schoolData[i].kpp) {                       
                         options.data["'" + contdata[k].postAddress+ "'"] = contdata[k].price;
 						//var dataColor = lineColor.evaluate(contdata[k].price);
-						var dataColor = firmColor.evaluate(k);						
+						var dataColor = firmColor.evaluate(colorCounter);
+                        colorCounter = colorCounter + 10;
 						var text = contdata[k].postAddress + " - Контракт на " + contdata[k].price + " рублей";
 						var dataWeight = lineWeight.evaluate(contdata[k].price);
 						options.chartOptions["'"+ contdata[k].postAddress+ "'"] =
@@ -111,21 +124,17 @@
                                     [contdata[k].seller_lat,contdata[k].seller_lng] ], {
                                 //        distanceToHeight: new L.LinearFunction([0, 0], [4000, 400]),
 								        fillColor: dataColor, 
-										color: dataColor,                                	
-								//color: '#4A7FFB', fillColor: '#4A7FFB',
-								       weight: dataWeight, displaytext: text
-                                 //       weight: 1.25
-                                        });
-						arcedPolyline.bindPopup(text);
-						arcedPolyline.on("click", function(e) { 						
-								map.setView(e.target._latlngs[1], 14);
-								e.target.openPopup();
+										color: dataColor,
+								       weight: dataWeight, displaytext: text });
+						arcedPolyline.bindPopup(text, {autoPanPadding: L.point(300, 200) });
+						arcedPolyline.on("click", function(e) {
+							e.target.openPopup();
 						});
-						arcedPolyline.on("popupclose", function(e) { 						
-								map.setView([55.75, 37.63], 10);								
+						arcedPolyline.on("popupclose", function(e) {
+								map.setView([55.75, 37.63], 10);
 						});
 						/*
-						arcedPolyline.on("mouseover", function(e) { 						
+						arcedPolyline.on("mouseover", function(e) {
 								console.log(e.target);
 								
 						});
@@ -139,10 +148,12 @@
 			
                 if (group.getLayers() != 0) {
 						group.addLayer(marker); 
-                        layerControl.addOverlay(group, schoolData[i].kratk_name);
+                        layerControl.addOverlay(group, schoolData[i].kratk_name, {groupName : "Школы Москвы", expanded:true});
 				}
                 if(i===0 && group.getLayers() != 0) { group.addTo(map); }
              }}
+
+        map.on("overlayadd", function(e) { map.setView([55.75, 37.63], 10);})
 
 /*
         for(var i=0; i<2; i++) {
@@ -204,16 +215,7 @@
                 }
             });
 
-            layerControl.addOverlay(connectLayer, key);
-	    console.log("---------------------------finished key " +key );
 
-            if(i==0) {
-           //     legendControl.addLayer(connectLayer);
-
-                map.addLayer(connectLayer);
-                }
-          }
-        }
 */
 
 
