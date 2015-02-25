@@ -64,8 +64,8 @@
 
 	    var lineWeight1m = new L.LinearFunction(new L.Point(50000, 1), new L.Point(1000000, 14));
 		var lineWeight50m = new L.LinearFunction(new L.Point(1000001, 14), new L.Point(50000000, 20));
-		var lineColor1m = new L.HSLHueFunction(new L.Point(50000, 120), new L.Point(1000000, 25), {outputLuminosity: '95%'});
-		var lineColor50m = new L.HSLHueFunction(new L.Point(1000001, 25), new L.Point(50000000, 20), {outputLuminosity: '95%'});
+		var lineColor1m = new L.HSLHueFunction(new L.Point(50000, 120), new L.Point(1000000, 10), {outputLuminosity: '60%'});
+		var lineColor50m = new L.HSLHueFunction(new L.Point(1000001, 10), new L.Point(50000000, 0), {outputLuminosity: '60%'});
 
 		var lineColor = new L.PiecewiseFunction([lineColor1m, lineColor50m]);
 		var lineWeight = new L.PiecewiseFunction([lineWeight1m, lineWeight50m]);
@@ -78,8 +78,14 @@
                 var options= { data: { }, chartOptions: {},
                     weight: 1, radius: 30, fillOpacity: 1, 
                     rotation: 0.0, position: { x: 0, y: 0 },
+				    tooltipOptions: {
+							iconSize: new L.Point(120, 100),
+							iconAnchor: new L.Point(-5, 64)
+							//,className: 'leaflet-div-icon line-legend'
+							},
                     offset: 20,
                     width: 30
+					
                 };
 
                 for(var k = 0; k <contdata.length; k++) {
