@@ -149,7 +149,7 @@
 			
                 if (group.getLayers() != 0) {
 						group.addLayer(marker); 
-                        layerControl.addBaseLayer(group, schoolData[i].kratk_name, {groupName : "Школы Москвы", expanded:true});
+                        layerControl.addOverlay(group, schoolData[i].kratk_name, {groupName : "Школы Москвы", expanded:true});
 				}
                 if(i===0 && group.getLayers() != 0) { group.addTo(map); }
              }}
@@ -214,16 +214,7 @@
                 }
             });
 
-            layerControl.addOverlay(connectLayer, key);
-	    console.log("---------------------------finished key " +key );
 
-            if(i==0) {
-           //     legendControl.addLayer(connectLayer);
-
-                map.addLayer(connectLayer);
-                }
-          }
-        }
 */
 
 
