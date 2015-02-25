@@ -101,7 +101,7 @@
                         options.data["'" + contdata[k].postAddress+ "'"] = contdata[k].price;
 						//var dataColor = lineColor.evaluate(contdata[k].price);
 						var dataColor = firmColor.evaluate(k);						
-						var text = contdata[k].postAddress;
+						var text = contdata[k].postAddress + " - Контракт на " + contdata[k].price + " рублей";
 						var dataWeight = lineWeight.evaluate(contdata[k].price);
 						options.chartOptions["'"+ contdata[k].postAddress+ "'"] =
                            { color: dataColor,
