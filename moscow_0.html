@@ -118,13 +118,13 @@
 								       weight: dataWeight, displaytext: text });
 						arcedPolyline.bindPopup(text, {autoPanPadding: L.point(300, 200) });
 						arcedPolyline.on("click", function(e) {
-                            e.target.openPopup();
+							e.target.openPopup();
 						});
-						arcedPolyline.on("popupclose", function(e) { 						
-								map.setView([55.75, 37.63], 10);								
+						arcedPolyline.on("popupclose", function(e) {
+								map.setView([55.75, 37.63], 10);
 						});
 						/*
-						arcedPolyline.on("mouseover", function(e) { 						
+						arcedPolyline.on("mouseover", function(e) {
 								console.log(e.target);
 								
 						});
@@ -142,6 +142,8 @@
 				}
                 if(i===0 && group.getLayers() != 0) { group.addTo(map); }
              }}
+
+        map.on("overlayadd", function(e) { map.setView([55.75, 37.63], 10);})
 
 /*
         for(var i=0; i<2; i++) {
