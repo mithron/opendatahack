@@ -69,11 +69,10 @@
             container_maxHeight: "550px",  group_maxHeight: "550px", exclusive: false}).addTo(map);
 		 
 	var loadingControl = L.Control.loading({
-            position: "topright",  separate: true, spinjs:true, 
-			spin: { lines: 15, length: 23, width: 14, radius: 40, corners: 1, rotate: 0,
+            separate: true, spinjs:true, 
+			spin: { lines: 15, length: 5, width: 5, radius: 4, corners: 1, rotate: 13,
 			direction: 1, color: '#000', speed: 1, trail: 60, shadow: false, hwaccel: false, 
-			zIndex: 2e9, top: '50%', // Top position relative to parent
-			left: '50%' // Left position relative to parent} 
+			zIndex: 2e9, top: '50%', left: '50%' 
 			}
                 });
     map.addControl(loadingControl);
