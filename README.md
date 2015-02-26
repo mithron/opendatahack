@@ -5,5 +5,5 @@ Extremely unstable. Consumes ALL of your memory. Loads for eternity.
 But we are working on it...
 
 
-If you still want to see it, go http://mithron.github.io/opendatahack/moscow_0.html
+If you still want to see it, go http://mithron.github.io/opendatahack/ or http://schools.mithron.me
 
