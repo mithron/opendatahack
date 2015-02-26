@@ -6,8 +6,8 @@
 
 	
 
-		var lineWeight1m = new L.LinearFunction(new L.Point(50000, 1), new L.Point(1000000, 14));
-		var lineWeight50m = new L.LinearFunction(new L.Point(1000001, 14), new L.Point(50000000, 20));
+		var lineWeight1m = new L.LinearFunction(new L.Point(50000, 1), new L.Point(1000000, 12));
+		var lineWeight50m = new L.LinearFunction(new L.Point(1000001, 12), new L.Point(50000000, 25));
 		var lineColor1m = new L.HSLHueFunction(new L.Point(50000, 120), new L.Point(1000000, 10), {outputLuminosity: '60%'});
 		var lineColor50m = new L.HSLHueFunction(new L.Point(1000001, 10), new L.Point(50000000, 0), {outputLuminosity: '60%'});
 
@@ -80,7 +80,10 @@
                 }                
                 var marker = new L.PieChartMarker(new L.LatLng(schoolData[i].lat,schoolData[i].lng),
                                options);                            
-			
+				marker.on("click", function(e) {
+					sidebar.setContent(e.target.toString());
+					sidebar.show();
+					});
                 if (group.getLayers() != 0) {
 					group.addLayer(marker); 
 					if(i===0) { group.addTo(map); }

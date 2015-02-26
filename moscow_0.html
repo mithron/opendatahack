@@ -27,7 +27,12 @@
 <body>
 	<div id="sidebar">
 		<h1>Здравствуйте!</h1>
-		<p>Перед вами - справочник по расходам московских школ.</p>
+		<p>Перед вами - справочник по расходам московских школ. Здесь представлены расходы лучших школ Москвы - тех школ, которые входили хотя бы раз в тот список, что выпускается ежегожно Департаментом Образования Москвы. </p>
+		<p>Пока что загружаются данные - немного об этом инструменте. </p>
+		<p>В правой панели Вы можете выбрать те школы, которые вас интересуют. Они будут представлены на карте. У выбранных школ будет отображена круговая диаграмма расходов. На диаграмме пропорционально сумме отображены контакты, при наведении мышки на них во всплывающем окне показана сумма и поставщик. </p>
+		<p>Школы линиями соединены с поставщиками. Толщина линии пропорциональна сумме контракта. Если кликнуть линию, то будет показано местоположение поставщика и его название. 
+		</p>
+		<p>Цвет индивидуально идентифицирует поставщика. Цвет на круговой диаграмме и линии совпадает.</p>
 	</div>
 	<div id="map"> </div>
 	
@@ -55,12 +60,17 @@
 	resize();
 
 	map = L.map('map').setView([55.75, 37.63], 10);
-	L.tileLayer('https://{s}.tiles.mapbox.com/v3/{id}/{z}/{x}/{y}.png',
+	
+	var accessToken = 'pk.eyJ1IjoibWl0aHJvbiIsImEiOiJiT0wwZkMwIn0.MnqefBaviEHMB3li6tpL4g';
+	var mapboxTiles = L.tileLayer('https://{s}.tiles.mapbox.com/v4/mithron.lake28fh/{z}/{x}/{y}.png?access_token=' + accessToken, { maxZoom: 18, 
+    attribution: '<a href="http://www.mapbox.com/about/maps/" target="_blank">Terms &amp; Feedback</a>'
+}).addTo(map);
+	/* L.tileLayer('https://{s}.tiles.mapbox.com/v3/{id}/{z}/{x}/{y}.png',
 			{maxZoom: 18, 
 			attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ' + 
 			'<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
 			'Imagery © <a href="http://mapbox.com">Mapbox</a>', id: 'examples.map-i875mjb7'
-			}).addTo(map);
+			}).addTo(map); */
 
         // Add a layer control
     var base = [];
