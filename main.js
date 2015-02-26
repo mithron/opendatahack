@@ -4,34 +4,7 @@
      //        autoAdd: false
      //   }).addTo(map);
 
-	// utility functions - not needed now
 	
-        var getSchoolByName= function(name) {
-            for(var i=0; i<schoolData.length; i++) {
-                if(schoolData[i].label == name) {
-                    return schoolData[i]; }
-            }
-        }
-
-		// strange function for getting location for layer L.Graph
-		
-        var getLocation = function (context, locationField, fieldValues, callback) {
-            var key = fieldValues[0];
-            var school = getSchoolByName(key);
-            var location;
-
-            if (school) {
-                var latlng = new L.LatLng(Number(school.lat), Number(school.lng));
-
-                location = {
-                    location: latlng,
-                    text: key,
-                    center: latlng
-                };
-            }
-           // console.log("Got coords! " + location.text + " = " + location.center);
-            return location;
-        };
 
 		var lineWeight1m = new L.LinearFunction(new L.Point(50000, 1), new L.Point(1000000, 14));
 		var lineWeight50m = new L.LinearFunction(new L.Point(1000001, 14), new L.Point(50000000, 20));
@@ -109,15 +82,44 @@
                                options);                            
 			
                 if (group.getLayers() != 0) {
-						group.addLayer(marker); 
-                        layerControl.addOverlay(group, schoolData[i].kratk_name, {groupName : "Школы Москвы", expanded:true});
-				}
-                if(i===0 && group.getLayers() != 0) { group.addTo(map); }
+					group.addLayer(marker); 
+					if(i===0) { group.addTo(map); }
+                    layerControl.addOverlay(group, schoolData[i].kratk_name, {groupName : "Школы Москвы", expanded:true});
+				}                
              }}
 
         map.on("overlayadd", function(e) { map.setView([55.75, 37.63], 10);})
 		map.fire("dataload");
 /*
+
+// utility functions - not needed now
+	
+        var getSchoolByName= function(name) {
+            for(var i=0; i<schoolData.length; i++) {
+                if(schoolData[i].label == name) {
+                    return schoolData[i]; }
+            }
+        }
+
+		// strange function for getting location for layer L.Graph
+		
+        var getLocation = function (context, locationField, fieldValues, callback) {
+            var key = fieldValues[0];
+            var school = getSchoolByName(key);
+            var location;
+
+            if (school) {
+                var latlng = new L.LatLng(Number(school.lat), Number(school.lng));
+
+                location = {
+                    location: latlng,
+                    text: key,
+                    center: latlng
+                };
+            }
+           // console.log("Got coords! " + location.text + " = " + location.center);
+            return location;
+        };
         for(var i=0; i<2; i++) {
           if (schoolData[i].lat) {
             L.marker([schoolData[i].lat, schoolData[i].lng]).addTo(map);
