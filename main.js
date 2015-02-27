@@ -27,36 +27,34 @@
 						});
 		
           for(var i=0; i<schoolData.length; i++) {
-	   //  for(var i=0; i<10; i++) {
-            if (schoolData[i].lat) {
+	   //  for(var i=0; i<10; i++) {           
                 var group = L.layerGroup();
                 var colorCounter = 0;
                 var options= { data: { }, chartOptions: {},
-                    weight: 1, radius: 38, fillOpacity: 1,
-                    rotation: 0.0, position: { x: 0, y: 0 },
+                    weight: 1, radius: 36, fillOpacity: 1,
+                    rotation: 0.0, position: { x: 20, y: 0 },
 				    tooltipOptions: {
 							iconSize: new L.Point(120, 100),
 							iconAnchor: new L.Point(-5, 64)
-							},
-                    offset: 20,
-                    barThickness: 22
+							},                    
+                    barThickness: 26
                 };
 
-                for(var k = 0; k <contdata.length; k++) {
-                    if(contdata[k].kpp === schoolData[i].kpp) {                       
-                        options.data["'" + contdata[k].postAddress+ "'"] = contdata[k].price;
-						//var dataColor = lineColor.evaluate(contdata[k].price);
+                for(var k = 0; k <contdata.length; k++) {				 
+                    if(contdata[k].school_inn === schoolData[i].inn) {                       
+                        options.data["'" + contdata[k].supplier_name+ "'"] = contdata[k].supplier_summ;
+						//var dataColor = lineColor.evaluate(contdata[k].supplier_summ);
 						var dataColor = firmColor.evaluate(colorCounter);
                         colorCounter = colorCounter + 10;
-						var text = contdata[k].postAddress + " - Контракт на " + contdata[k].price + " рублей";
-						var dataWeight = lineWeight.evaluate(contdata[k].price);
-						options.chartOptions["'"+ contdata[k].postAddress+ "'"] =
+						var text = contdata[k].supplier_name + " - Контракт на " + contdata[k].supplier_summ + " рублей";
+						var dataWeight = lineWeight.evaluate(contdata[k].supplier_summ);
+						options.chartOptions["'"+ contdata[k].supplier_name+ "'"] =
                            { color: dataColor,
                             fillcolor: dataColor,						
                              minValue: 0, maxValue: 50000000                         
                             } ;
                         var arcedPolyline = new L.ArcedPolyline([[schoolData[i].lat,schoolData[i].lng],
-                                    [contdata[k].seller_lat,contdata[k].seller_lng] ], {
+                                    [contdata[k].supplier_lat,contdata[k].supplier_lng] ], {
                                 //        distanceToHeight: new L.LinearFunction([0, 0], [4000, 400]),
 								        fillColor: dataColor, 
 										color: dataColor,
@@ -76,20 +74,22 @@
 */
 
                         group.addLayer(arcedPolyline);
-                    }
-                }                
-                var marker = new L.PieChartMarker(new L.LatLng(schoolData[i].lat,schoolData[i].lng),
+                    }                 
+				}                
+                
+				var marker = new L.PieChartMarker(new L.LatLng(schoolData[i].lat,schoolData[i].lng),
                                options);                            
 				marker.on("click", function(e) {
+					console.log(e.target);
 					sidebar.setContent(e.target.toString());
 					sidebar.show();
-					});
+					});				
                 if (group.getLayers() != 0) {
-					group.addLayer(marker); 
+					group.addLayer(marker); 					
 					if(i===0) { group.addTo(map); }
                     layerControl.addOverlay(group, schoolData[i].kratk_name, {groupName : "Школы Москвы", expanded:true});
 				}                
-             }}
+             }
 
         map.on("overlayadd", function(e) { map.setView([55.75, 37.63], 10);})
 		map.fire("dataload");
@@ -99,7 +99,7 @@
 	
         var getSchoolByName= function(name) {
             for(var i=0; i<schoolData.length; i++) {
-                if(schoolData[i].label == name) {
+                if(schoolData[i].kratk_name == name) {
                     return schoolData[i]; }
             }
         }
