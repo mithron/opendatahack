@@ -6,7 +6,7 @@ Use refine filter for export from school_buh_data:
       "lng" : {{jsonize(cells["lng"].value)}},
       "lat" : {{jsonize(cells["lat"].value)}},
       "kpp" : {{jsonize(cells["kpp"].value)}},
-      "inn" : {{jsonize(cells["inn"].value)}},
+      "inn" : {{jsonize(cells["inn"].value)}}
     }
 """
 import unirest
@@ -33,8 +33,8 @@ class Schools(Item):
 
 
 def load_schools():
-    data = json.load('schools_buh_data-csv.txt').get('rows')
-    with open("schools-suppliers.txt") as result_file:
+    data = json.load(open('schools_buh_data-csv.txt')).get('rows')
+    with open("schools-suppliers.txt", "w") as result_file:
         result_file.write("[")
         for row in data:
             suppliers = {}
@@ -48,17 +48,25 @@ def load_schools():
                 print response.body
                 continue
             for contract in response.body['contracts']['data']:
-                sup_inn = contract['suppliers']['supplier']['inn']
-                if sup_inn in suppliers:
-                    suppliers[sup_inn]['summ'] += contract['price']
-                suppliers[sup_inn] = {
-                    'inn': sup_inn,
-                    'summ': contract['price'],
-                    'kpp': contract['suppliers']['supplier'].get('kpp'),
-                    'name': contract['suppliers']['supplier']['organizationName'],
-                    'address': contract['suppliers']['supplier']['postAddress']
-                }
+                try:
+                    sup_inn = contract['suppliers']['supplier'].get('inn')
+                    if not sup_inn:
+                        continue
+                    if sup_inn in suppliers:
+                        suppliers[sup_inn]['summ'] += contract['price']
+                    print contract['suppliers']['supplier']
+                    suppliers[sup_inn] = {
+                        'inn': sup_inn,
+                        'summ': contract['price'],
+                        'kpp': contract['suppliers']['supplier'].get('kpp'),
+                        'name': contract['suppliers']['supplier'].get('organizationName'),
+                        'address': contract['suppliers']['supplier'].get('postAddress')
+                    }
+                except:
+                    pass
             for sup_inn, sup_data in suppliers.iteritems():
+                if not sup_data['address']:
+                    continue
                 geo_url = u'u"http://geocode-maps.yandex.ru/1.x/?format=json&geocode=' + sup_data['address']
                 try:
                     response = unirest.get(httplib2.iri2uri(geo_url))
@@ -72,5 +80,9 @@ def load_schools():
             for sup_inn, sup_data in suppliers.iteritems():
                 result_row = row
                 result_row['suppliers'] = sup_data
-                result_file.write(json.dumps(result_row) + ', ')
+                result_file.write(json.dumps(result_row))
+                if sup_inn != suppliers.keys()[-1]:
+                    result_file.write(', ')
         result_file.write("]")
+
+load_schools()
