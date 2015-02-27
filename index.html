@@ -36,8 +36,8 @@
 	</div>
 	<div id="map"> </div>
 	
-	<script defer="defer" src="schools_data.js"></script>
-    <script defer="defer" src="contract_data2.js"></script>
+	<script defer="defer" src="schools_data_short.js"></script>
+    <script defer="defer" src="contdata3.js"></script>
 	<script defer="defer" src="main.js"></script>
 	
 	<script>
@@ -63,14 +63,8 @@
 	
 	var accessToken = 'pk.eyJ1IjoibWl0aHJvbiIsImEiOiJiT0wwZkMwIn0.MnqefBaviEHMB3li6tpL4g';
 	var mapboxTiles = L.tileLayer('https://{s}.tiles.mapbox.com/v4/mithron.lake28fh/{z}/{x}/{y}.png?access_token=' + accessToken, { maxZoom: 18, 
-    attribution: '<a href="http://www.mapbox.com/about/maps/" target="_blank">Terms &amp; Feedback</a>'
-}).addTo(map);
-	/* L.tileLayer('https://{s}.tiles.mapbox.com/v3/{id}/{z}/{x}/{y}.png',
-			{maxZoom: 18, 
-			attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ' + 
-			'<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
-			'Imagery © <a href="http://mapbox.com">Mapbox</a>', id: 'examples.map-i875mjb7'
-			}).addTo(map); */
+				attribution: '<a href="http://www.mapbox.com/about/maps/" target="_blank">Terms &amp; Feedback</a>'
+				}).addTo(map);	
 
         // Add a layer control
     var base = [];
@@ -95,6 +89,6 @@
     map.addControl(sidebar);
     setTimeout(function () {
             sidebar.show();
-        }, 500);	
+        }, 50);	
 	</script>
 </body></html>
