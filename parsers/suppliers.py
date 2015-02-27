@@ -13,6 +13,7 @@ import unirest
 from collections import OrderedDict
 import json
 import httplib2
+import codecs
 
 headers = {
     "X-Mashape-Key": "uJeBYfacdymsht703eCMb02gNbpAp1VneSSjsnW1f5sK8lxEav",
@@ -33,8 +34,9 @@ class Schools(Item):
 
 
 def load_schools():
-    data = json.load('schools_buh_data-csv.txt').get('rows')
-    with open("schools-suppliers.txt") as result_file:
+    read_file =  codecs.open('schools_buh_data-csv.txt','r')
+    data = json.load(read_file).get('rows')
+    with codecs.open("schools-suppliers.txt", 'w', encoding='utf8') as result_file:
         result_file.write("[")
         for row in data:
             suppliers = {}
@@ -64,7 +66,7 @@ def load_schools():
                     response = unirest.get(httplib2.iri2uri(geo_url))
                     geo_data = json.loads(response.body)
                     if int(geo_data['response']['metaDataProperty']['found']):
-                        lng, lat = geo_data['response']['GeoObjectCollection']['featureMember'][0]['GeoObject']['Point']['pos'].split(' ')
+                        lng, lat = geo_data['response']['GeoObjectCollection']['featureMember'][0]['.']['Point']['pos'].split(' ')
                     suppliers[sup_inn]['lng'] = lng
                     suppliers[sup_inn]['lat'] = lat
                 except:
@@ -74,3 +76,5 @@ def load_schools():
                 result_row['suppliers'] = sup_data
                 result_file.write(json.dumps(result_row) + ', ')
         result_file.write("]")
+
+load_schools()
