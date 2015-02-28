@@ -13,6 +13,7 @@ import unirest
 from collections import OrderedDict
 import json
 import httplib2
+import io
 
 headers = {
     "X-Mashape-Key": "uJeBYfacdymsht703eCMb02gNbpAp1VneSSjsnW1f5sK8lxEav",
@@ -34,9 +35,9 @@ class Schools(Item):
 
 def load_schools():
     data = json.load(open('schools_buh_data-csv.txt')).get('rows')
-    with open("schools-suppliers.txt", "w") as result_file:
-        result_file.write("[")
-        for row in data:
+    with io.open("schools-suppliers.txt", "w", encoding='utf8') as result_file:
+        result_file.write(u"[")
+        for i, row in enumerate(data):
             suppliers = {}
             try:
                 response = unirest.get(("https://clearspending.p.mashape.com/v1/"
@@ -57,6 +58,7 @@ def load_schools():
                     print contract['suppliers']['supplier']
                     suppliers[sup_inn] = {
                         'inn': sup_inn,
+                        'cont_id': contract['regNum'],
                         'summ': contract['price'],
                         'kpp': contract['suppliers']['supplier'].get('kpp'),
                         'name': contract['suppliers']['supplier'].get('organizationName'),
@@ -67,22 +69,22 @@ def load_schools():
             for sup_inn, sup_data in suppliers.iteritems():
                 if not sup_data['address']:
                     continue
-                geo_url = u'u"http://geocode-maps.yandex.ru/1.x/?format=json&geocode=' + sup_data['address']
+                geo_url = u'http://geocode-maps.yandex.ru/1.x/?format=json&geocode=' + sup_data['address']
                 try:
                     response = unirest.get(httplib2.iri2uri(geo_url))
-                    geo_data = json.loads(response.body)
-                    if int(geo_data['response']['metaDataProperty']['found']):
+                    geo_data = response.body
+                    if int(geo_data['response']['GeoObjectCollection']['metaDataProperty']['GeocoderResponseMetaData']['found']):
                         lng, lat = geo_data['response']['GeoObjectCollection']['featureMember'][0]['GeoObject']['Point']['pos'].split(' ')
                     suppliers[sup_inn]['lng'] = lng
                     suppliers[sup_inn]['lat'] = lat
                 except:
                     continue
-            for sup_inn, sup_data in suppliers.iteritems():
-                result_row = row
-                result_row['suppliers'] = sup_data
-                result_file.write(json.dumps(result_row))
-                if sup_inn != suppliers.keys()[-1]:
-                    result_file.write(', ')
-        result_file.write("]")
+        
+            result_row = row
+            result_row['suppliers'] = suppliers
+            result_file.write(json.dumps(result_row, ensure_ascii=False, encoding='utf8'))
+            if (i + 1) < len(data):
+                result_file.write(u', ')
+        result_file.write(u"]")
 
 load_schools()
