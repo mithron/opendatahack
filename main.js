@@ -32,7 +32,7 @@
                 var colorCounter = 0;
                 var options= { data: { }, chartOptions: {},
                     weight: 1, radius: 36, fillOpacity: 1,
-                    rotation: 0.0, position: { x: 20, y: 0 },
+                    rotation: 0.0, position: { x: 0, y: 0 },
 				    tooltipOptions: {
 							iconSize: new L.Point(120, 100),
 							iconAnchor: new L.Point(-5, 64)
