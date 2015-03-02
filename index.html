@@ -166,10 +166,10 @@
 					};			
 				var marker = new L.PieChartMarker(new L.LatLng(data[0].lat,data[0].lng),
                                options);                            
-				marker.on("click", function(e) {
-					console.log(e);
+				marker.on("click", function(e) {					
 					console.log(e.target);
-					sidebar.setContent(e.target.options.chartOptions[e.target.options.key].text);
+					console.log(e.layer);
+					sidebar.setContent(e.target.options.chartOptions[e.layer.options.key].text);
 					sidebar.show();
 					});				
                 if (group.getLayers() != 0) {
