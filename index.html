@@ -38,10 +38,8 @@
 	</div>
 	<div id="map"></div>
 	
-	<script defer="defer" src="schools_data_short.js"></script>
-    <script defer="defer" src="contdata3.js"></script>
-	<script defer="defer" src="main.js"></script>
-	
+	<script src="schools_data_short.js"></script>
+   
 	<script>
 	var map;
 
@@ -92,5 +90,97 @@
     setTimeout(function () {
             sidebar.show();
         }, 50);	
+	var lineWeight1m = new L.LinearFunction(new L.Point(50000, 1), new L.Point(1000000, 12));
+	var lineWeight50m = new L.LinearFunction(new L.Point(1000001, 12), new L.Point(50000000, 25));
+	var lineWeight = new L.PiecewiseFunction([lineWeight1m, lineWeight50m]);
+
+	var firmColor = new L.HSLHueFunction(new L.Point(0, 260), new L.Point(1024, 0),
+						{outputLuminosity: '40%', oddity:0, preProcess: function(value) {
+							if (this.options.oddity == 1){
+								this.options.oddity = 0;
+								value = 1024 - value;
+                                if(value<0) {return 0-value;}
+                                else {	return value; }
+								}
+							else { this.options.oddity = 1; return value ;}							
+							}
+						});
+	
+	for(var i=0; i<schoolData.length; i++) {		
+		if (schoolData[i].inn){
+			var url = 'https://intense-journey-6292.herokuapp.com/'+ schoolData[i].inn +'/';
+			$.getJSON(url, function(data) {
+			  if (data != 0){
+			    map.fire('dataloading');
+				var suppliers = data[0].suppliers;
+				var group = L.layerGroup();
+				var colorCounter = 0;
+				var options = { data: { }, chartOptions: {},
+                    weight: 1, radius: 36, fillOpacity: 1,
+                    rotation: 0.0, position: { x: 0, y: 0 },
+				    tooltipOptions: {
+							iconSize: new L.Point(120, 100),
+							iconAnchor: new L.Point(-5, 64)
+							},                    
+                    barThickness: 26
+                };
+				for (var key in data[0].suppliers) {
+					if (data[0].suppliers.hasOwnProperty(key)) {						
+						var date = data[0].suppliers[key].sign_date.split('-')[0];
+						
+						options.data["'" + data[0].suppliers[key].name+ "'"] = data[0].suppliers[key].summ;						
+						
+						var dataColor = firmColor.evaluate(colorCounter);
+                        colorCounter = colorCounter + 10;
+						var text = data[0].suppliers[key].name + " - Контракт на " + data[0].suppliers[key].summ + " рублей";
+						var dataWeight = lineWeight.evaluate(data[0].suppliers[key].summ);
+						
+						options.chartOptions["'"+ data[0].suppliers[key].name+ "'"] =
+                           { color: dataColor,
+                            fillColor: dataColor,						
+                             minValue: 0, maxValue: 50000000,
+							 text: text							 
+                            } ;
+							
+                        var arcedPolyline = new L.ArcedPolyline([[data[0].lat,data[0].lng],
+                                    [data[0].suppliers[key].lat,data[0].suppliers[key].lng] ], {
+                                //        distanceToHeight: new L.LinearFunction([0, 0], [4000, 400]),
+								       fillColor: dataColor, 
+									   color: dataColor,
+								       weight: dataWeight, displayText: text });
+						arcedPolyline.bindPopup(text, {autoPanPadding: L.point(300, 200) });
+						arcedPolyline.on("click", function(e) {
+							e.target.openPopup();
+						});
+						arcedPolyline.on("popupclose", function(e) {
+								map.setView([55.75, 37.63], 10);
+						});
+						/*
+						arcedPolyline.on("mouseover", function(e) {
+								console.log(e.target);
+								
+						});*/
+
+                        group.addLayer(arcedPolyline);						
+						};
+					};			
+				var marker = new L.PieChartMarker(new L.LatLng(data[0].lat,data[0].lng),
+                               options);                            
+				marker.on("click", function(e) {
+					console.log(e);
+					console.log(e.target);
+					sidebar.setContent(e.target.options.chartOptions[e.target.options.key].text);
+					sidebar.show();
+					});				
+                if (group.getLayers() != 0) {
+					group.addLayer(marker);					
+                    layerControl.addOverlay(group, data[0].full_name, {groupName : "Школы Москвы", expanded:true});
+					//console.log('Done ' + data[0].full_name);
+				}                
+				 map.fire('dataload');
+			}});
+		}
+	}
+	map.fire("dataload");
 	</script>
 </body></html>
