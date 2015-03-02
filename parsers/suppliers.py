@@ -59,6 +59,8 @@ def load_schools():
                     suppliers[sup_inn] = {
                         'inn': sup_inn,
                         'cont_id': contract['regNum'],
+                        'sign_date': contract['signDate'],
+                        'product_name': contract['products']['product']['name'],
                         'summ': contract['price'],
                         'kpp': contract['suppliers']['supplier'].get('kpp'),
                         'name': contract['suppliers']['supplier'].get('organizationName'),
