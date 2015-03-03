@@ -9,7 +9,7 @@ Use refine filter for export from school_buh_data:
       "lng" : {{jsonize(cells["lng"].value)}},
       "lat" : {{jsonize(cells["lat"].value)}},
       "kpp" : {{jsonize(cells["kpp"].value)}},
-      "inn" : {{jsonize(cells["inn"].value)}},
+      "inn" : {{jsonize(cells["inn"].value)}}
     }
 """
 import unirest
@@ -19,6 +19,7 @@ import httplib2
 import codecs
 import csvkit
 from urllib import urlencode
+import io
 
 headers = {
     "X-Mashape-Key": "uJeBYfacdymsht703eCMb02gNbpAp1VneSSjsnW1f5sK8lxEav",
@@ -51,11 +52,10 @@ cust_ret_fields = '[suppliers,products,price,signDate,regNum]'
 
 
 def load_schools():
-    read_file = codecs.open('schools_buh_data-csv.txt', 'r')
-    data = json.load(read_file).get('rows')
-    with codecs.open("schools-suppliers.txt", 'w', encoding='utf8') as result_file:
-        result_file.write("[")
-        for row in data:
+    data = json.load(open('schools_buh_data-csv.txt')).get('rows')
+    with io.open("schools-suppliers.txt", "w", encoding='utf8') as result_file:
+        result_file.write(u"[")
+        for i, row in enumerate(data):
             suppliers = {}
             try:
                 response = unirest.get(("https://clearspending.p.mashape.com/v1/"
@@ -72,6 +72,7 @@ def load_schools():
                 print response.body
                 continue
             for contract in response.body['contracts']['data']:
+                }
                 sup_inn = contract['suppliers']['supplier']['inn']
                 if sup_inn in suppliers:
                     suppliers[sup_inn]['summ'] += contract['price']
@@ -82,11 +83,11 @@ def load_schools():
                     suppliers['sup_inn'] = {
                         'contracts': [{'date': contract['signDate'],'price': contract['price'], 'products': []}],
                         'inn': sup_inn,
-                        'regNum': contract['regNum'],
+                        'cont_id': contract['regNum'],
                         'kpp': contract['suppliers']['supplier'].get('kpp'),
-                        'name': contract['suppliers']['supplier']['organizationName'],
-                        'address_ur': contract['suppliers']['supplier']['postAddress'],
-                        'address_fact':contract['suppliers']['supplier']['factualAddress']
+                        'name': contract['suppliers']['supplier'].get('organizationName'),,
+                        'address_ur': contract['suppliers']['supplier'].get('postAddress'),
+                        'address_fact':contract['suppliers']['supplier'].get('factualAddress')
                         }
                 if type(contract['products']['product']) != list:
                     try:
@@ -99,53 +100,25 @@ def load_schools():
                         suppliers['sup_inn']['contracts'][-1]['products'].append(
                             {'name': item['name']})
             for sup_inn, sup_data in suppliers.iteritems():
-                geo_url = u'http://geocode-maps.yandex.ru/1.x/?format=json&geocode=' + sup_data['address_ur']
+                if not sup_data['address']:
+                    continue
+                geo_url = u'http://geocode-maps.yandex.ru/1.x/?format=json&geocode=' + sup_data['address']
                 try:
                     response = unirest.get(httplib2.iri2uri(geo_url))
-                    geo_data = json.loads(response.body)
-                    if int(geo_data['response']['metaDataProperty']['found']):
+                    geo_data = response.body
+                    if int(geo_data['response']['GeoObjectCollection']['metaDataProperty']['GeocoderResponseMetaData']['found']):
                         # response.GeoObjectCollection.featureMember[0].GeoObject.Point.pos.split(" ")[1]
                         lng, lat = geo_data['response']['GeoObjectCollection']['featureMember'][0]['GeoObject']['Point']['pos'].split(' ')
                     suppliers[sup_inn]['lng'] = lng
                     suppliers[sup_inn]['lat'] = lat
                 except:
                     continue
-            for sup_inn, sup_data in suppliers.iteritems():
-                result_row = row
-                result_row['suppliers'] = sup_data
-                result_file.write(json.dumps(result_row) + ', ')
-        result_file.write("]")
+        
+            result_row = row
+            result_row['suppliers'] = suppliers
+            result_file.write(json.dumps(result_row, ensure_ascii=False, encoding='utf8'))
+            if (i + 1) < len(data):
+                result_file.write(u', ')
+        result_file.write(u"]")
 
 load_schools()
-
-def get_buh_info():
-    with open("schools_buh_data.csv",'w') as buh_file:
-        result_writer = csvkit.writer(buh_file)
-        with open("school_ratings_adr.csv", 'r') as full_file:
-            ratings_reader = csvkit.reader(full_file)
-            result_writer.writerow(ratings_reader.next()+['kpp', 'inn', 'contractsNum', 'clearsp_id'])
-            errors = 0
-            failed = []
-            for row in ratings_reader:
-                ask= urlencode({cust_ask_name: row[9].encode('utf-8'), cust_ask_fields: cust_ret_fields})
-
-                response = unirest.get((cust_mashape_url+ask),
-                                       headers=headers)
-
-                try:
-                    if unicode(response.body['customers']['data'][0]['fullName']) == unicode(row[9]):
-                        result_writer.writerow(row+[response.body['customers']['data'][0]['kpp'],
-                                                    response.body['customers']['data'][0]['inn'],
-                                                    response.body['customers']['data'][0]['contractsCount'],
-                                                    response.body['customers']['data'][0]['id']])
-                    else:
-                        failed.append(row[9])
-                        result_writer.writerow(row)
-                except:
-                    errors += 1
-                    failed.append(row[9])
-                    result_writer.writerow(row)
-            print("Errors: %s" % str(errors))
-            print("Failed: %s" % unicode(", ".join(failed)))
-
-
