@@ -110,101 +110,117 @@
 						});
 	
 	
-	for(var i=0; i<schoolData.length; i++) {		
+	for(var i=0; i<schoolData.length; i++) {
+    // for(var i=0; i<10; i++) {
 		if (schoolData[i].inn){
-			var url = 'https://intense-journey-6292.herokuapp.com/'+ schoolData[i].inn +'/';
-			$.getJSON(url, function(data) {
-			  if (data != 0){
-			    map.fire('dataloading');
-				var suppliers = data[0].suppliers;
-				var group = L.layerGroup();
-				var colorCounter = 0;				
-				var options = { };
-				
-				for (var key in data[0].suppliers) {
-					if (data[0].suppliers.hasOwnProperty(key)) {						
-						var date = data[0].suppliers[key].sign_date.split('-')[0];						
-						var dataColor = firmColor.evaluate(colorCounter);
-                        colorCounter = colorCounter + 10;
-						var text = "<p>&nbsp;</p><p>" + data[0].full_name + "</p><p>Контракт c " + data[0].suppliers[key].name + " на " + data[0].suppliers[key].summ + " рублей заключен в " + date + " году.</p> <p>Предмет контракта: " +data[0].suppliers[key].product_name + "</p>" + "<p>Адрес поставщика: " +data[0].suppliers[key].address + "</p><p>Расширенные сведения о контракте см. <a target='_blank' href='http://clearspending.ru/contract/"+data[0].suppliers[key].cont_id+"'>тут</a>.</p>" ;
-						
-						var dataWeight = lineWeight.evaluate(data[0].suppliers[key].summ);					
-						var dataOffset = diagOffset.evaluate(date);
-						
-						if(typeof options[date] != "undefined"){
-							options[date].data["'" + data[0].suppliers[key].name+ "'"] = 							data[0].suppliers[key].summ;
-							options[date].chartOptions["'"+ data[0].suppliers[key].name+ "'"] =
-								{ color: dataColor,
-								fillColor: dataColor,						
-								minValue: 0, maxValue: 50000000,
-								text: text,								
-								} ;
-							}
-						else {							
-							options[date] = { data: { }, chartOptions: {},
-								weight: 1, radius: 36, fillOpacity: 1,
-									rotation: 0.0, position: { x: dataOffset, y: 0 },
-								tooltipOptions: {
-									iconSize: new L.Point(120, 100),
-									iconAnchor: new L.Point(-5, 64)
-									},                    
-								barThickness: 26
-							};
-							// options[date].position.x = dataOffset;							
-							options[date].data["'" + data[0].suppliers[key].name+ "'"] = 							data[0].suppliers[key].summ;
-							options[date].chartOptions["'"+ data[0].suppliers[key].name+ "'"] =
-								{ color: dataColor,
-								fillColor: dataColor,						
-								minValue: 0, maxValue: 50000000,
-								text: text							 
-								} ;
-							}					
-						
-						
-						
-							
-                        var arcedPolyline = new L.ArcedPolyline([[data[0].lat,data[0].lng],
-                                    [data[0].suppliers[key].lat,data[0].suppliers[key].lng] ], {
-                                //        distanceToHeight: new L.LinearFunction([0, 0], [4000, 400]),
-								       fillColor: dataColor, 
-									   color: dataColor,
-								       weight: dataWeight, displayText: text });
-						arcedPolyline.bindPopup(text, {autoPanPadding: L.point(300, 200) });
-						arcedPolyline.on("click", function(e) {
-							e.target.openPopup();
-						});
-						arcedPolyline.on("popupclose", function(e) {
-								map.setView([55.75, 37.63], 10);
-						});
-						/*
-						arcedPolyline.on("mouseover", function(e) {
-								console.log(e.target);
-								
-						});*/
+            var marker = new L.Marker([schoolData[i].lat,schoolData[i].lng], options = { inn: schoolData[i].inn} );
+            var group = L.layerGroup([marker]);
 
-                        group.addLayer(arcedPolyline);						
-						};
-					};				
-				for(i=2011;i<2015;i++){
-				  if(typeof options[i] != "undefined"){					
-					var marker = new L.PieChartMarker(new L.LatLng(data[0].lat,data[0].lng),
-                               options[i]);
-					marker.on("click", function(e) {
-						sidebar.hide();
-						sidebar.setContent(e.layer.options.chartOptions[e.layer.options.key].text);
-						sidebar.show();
-						});	
-					group.addLayer(marker);						
-				}};
-							
-                if (group.getLayers() != 0) {										
-                    layerControl.addOverlay(group, data[0].full_name, {groupName : "Школы Москвы", expanded:true});
-					//console.log('Done ' + data[0].full_name);
-				}                
-				 map.fire('dataload');
-			}});
-		}
-	}
+            layerControl.addOverlay(group, schoolData[i].full_name, {groupName : "Школы Москвы", expanded:true});
+        }}
+
+    map.on("overlayadd", function(e) {
+            var group = e.layer;
+            var layers = group.getLayers();
+            if(layers.length == 1 )
+                {   console.log(group);
+                    var url = 'https://intense-journey-6292.herokuapp.com/'+ layers[0].options.inn +'/';
+                    group.clearLayers();
+                    $.getJSON(url, function(data) {
+                        if (data != 0){
+                            console.log('going');
+                            map.fire('dataloading');
+                            var suppliers = data[0].suppliers;
+                            var colorCounter = 0;
+                            var options = { };
+
+                            for (var key in data[0].suppliers) {
+                                if (data[0].suppliers.hasOwnProperty(key)) {
+                                    var date = data[0].suppliers[key].sign_date.split('-')[0];
+                                    var dataColor = firmColor.evaluate(colorCounter);
+                                    colorCounter = colorCounter + 10;
+                                    var text = "<p>&nbsp;</p><p>" + data[0].full_name + "</p><p>Контракт c " + data[0].suppliers[key].name + " на " + data[0].suppliers[key].summ + " рублей заключен в " + date + " году.</p> <p>Предмет контракта: " +data[0].suppliers[key].product_name + "</p>" + "<p>Адрес поставщика: " +data[0].suppliers[key].address + "</p><p>Расширенные сведения о контракте см. <a target='_blank' href='http://clearspending.ru/contract/"+data[0].suppliers[key].cont_id+"'>тут</a>.</p>" ;
+
+                                    var dataWeight = lineWeight.evaluate(data[0].suppliers[key].summ);
+                                    var dataOffset = diagOffset.evaluate(date);
+
+                                    if(typeof options[date] != "undefined"){
+                                        options[date].data["'" + data[0].suppliers[key].name+ "'"] = 							data[0].suppliers[key].summ;
+                                        options[date].chartOptions["'"+ data[0].suppliers[key].name+ "'"] =
+                                        { color: dataColor,
+                                            fillColor: dataColor,
+                                            minValue: 0, maxValue: 50000000,
+                                            text: text,
+                                        } ;
+                                    }
+                                    else {
+                                        options[date] = { data: { }, chartOptions: {},
+                                            weight: 1, radius: 36, fillOpacity: 1,
+                                            rotation: 0.0, position: { x: dataOffset, y: 0 },
+                                            tooltipOptions: {
+                                                iconSize: new L.Point(120, 100),
+                                                iconAnchor: new L.Point(-5, 64)
+                                            },
+                                            barThickness: 26
+                                        };
+                                        // options[date].position.x = dataOffset;
+                                        options[date].data["'" + data[0].suppliers[key].name+ "'"] = 							data[0].suppliers[key].summ;
+                                        options[date].chartOptions["'"+ data[0].suppliers[key].name+ "'"] =
+                                        { color: dataColor,
+                                            fillColor: dataColor,
+                                            minValue: 0, maxValue: 50000000,
+                                            text: text
+                                        } ;
+                                    }
+
+
+
+
+                                    var arcedPolyline = new L.ArcedPolyline([[data[0].lat,data[0].lng],
+                                        [data[0].suppliers[key].lat,data[0].suppliers[key].lng] ], {
+                                        //        distanceToHeight: new L.LinearFunction([0, 0], [4000, 400]),
+                                        fillColor: dataColor,
+                                        color: dataColor,
+                                        weight: dataWeight, displayText: text });
+                                    arcedPolyline.bindPopup(text, {autoPanPadding: L.point(300, 200) });
+                                    arcedPolyline.on("click", function(e) {
+                                        e.target.openPopup();
+                                    });
+                                    arcedPolyline.on("popupclose", function(e) {
+                                        map.setView([55.75, 37.63], 10);
+                                    });
+                                    /*
+                                     arcedPolyline.on("mouseover", function(e) {
+                                     console.log(e.target);
+
+                                     });*/
+
+                                     group.addLayer(arcedPolyline);
+                                     };
+                                     };
+                                     for(i=2011;i<2015;i++){
+                                     if(typeof options[i] != "undefined"){
+                                     var marker = new L.PieChartMarker(new L.LatLng(data[0].lat,data[0].lng),
+                                     options[i]);
+                                     marker.on("click", function(e) {
+                                     sidebar.hide();
+                                     sidebar.setContent(e.layer.options.chartOptions[e.layer.options.key].text);
+                                     sidebar.show();
+                                     });
+                                     group.addLayer(marker);
+                                     }};
+
+                                     if (group.getLayers() != 0) {
+                                     layerControl.addOverlay(group, data[0].full_name, {groupName : "Школы Москвы", expanded:true});
+                                     //console.log('Done ' + data[0].full_name);
+                                     }
+                                     map.fire('dataload');
+                                     }});
+                }
+            /*
+            */
+	});
+
 	map.fire("dataload");
 	</script>
 </body></html>
