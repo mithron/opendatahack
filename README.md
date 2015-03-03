@@ -1,4 +1,4 @@
-# Расходы школ Москвы
+# Р Р°СЃС…РѕРґС‹ С€РєРѕР» РњРѕСЃРєРІС‹
 
 If you want to see it, go http://schools.mithron.me .
 
