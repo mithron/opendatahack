@@ -122,6 +122,7 @@
     map.on("overlayadd", function(e) {
             var group = e.layer;
             var layers = group.getLayers();
+			map.fire('dataloading');
             if(layers.length == 1 )
                 {   console.log(group);
                     var url = 'https://intense-journey-6292.herokuapp.com/'+ layers[0].options.inn +'/';
@@ -129,7 +130,7 @@
                     $.getJSON(url, function(data) {
                         if (data != 0){
                             console.log('going');
-                            map.fire('dataloading');
+                           
                             var suppliers = data[0].suppliers;
                             var colorCounter = 0;
                             var options = { };
@@ -217,8 +218,7 @@
                                      map.fire('dataload');
                                      }});
                 }
-            /*
-            */
+           
 	});
 
 	map.fire("dataload");
