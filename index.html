@@ -123,12 +123,11 @@
             var group = e.layer;
             var layers = group.getLayers();
 			map.fire('dataloading');
-            if(layers.length == 1 )                {   
+            if(layers.length == 1 ) {   
                     var url = 'https://intense-journey-6292.herokuapp.com/'+ layers[0].options.inn +'/';
                     group.clearLayers();
                     $.getJSON(url, function(data) {
-                        if (data != 0){
-                            console.log('going');
+                        if (data != 0){                    
                            
                             var suppliers = data[0].suppliers;
                             var colorCounter = 0;
@@ -144,7 +143,7 @@
                                     var dataWeight = lineWeight.evaluate(data[0].suppliers[key].summ);
                                     var dataOffset = diagOffset.evaluate(date);
 
-									var audio = '<audio src="http://tts.voicetech.yandex.net/generate?text=' +"'" + data[0].full_name + " Контракт c " + data[0].suppliers[key].name + " на " + data[0].suppliers[key].summ + " рублей заключен в " + date + " году. Предмет контракта: " +data[0].suppliers[key].product_name + " Адрес поставщика: " +data[0].suppliers[key].address +"'" +'&format=mp3&lang=ru-RU&speaker=zahar&key=519d3768-9302-4f28-8eab-0eb1bf9579d5" autoplay="autoplay" type="audio/mp3" preload="none"></audio></div>';
+									var audio = '<audio src="http://tts.voicetech.yandex.net/generate?text=' +"'" + data[0].full_name + "%20Контракт%20c%20" + data[0].suppliers[key].name + "%20на%20" + data[0].suppliers[key].summ + "%20рублей%20заключен%20в " + date + "%20году.%20Предмет контракта:%20" +data[0].suppliers[key].product_name + "%20Адрес%20поставщика:%20" +data[0].suppliers[key].address +"'" +'&format=mp3&lang=ru-RU&speaker=zahar&key=519d3768-9302-4f28-8eab-0eb1bf9579d5" autoplay="autoplay" type="audio/mp3" preload="none"></audio></div>';
                         			text = audio + text;
 
                                     if(typeof options[date] != "undefined"){
@@ -200,27 +199,29 @@
 
                                      group.addLayer(arcedPolyline);
                                      };
-                                     };
-                                     for(i=2011;i<2015;i++){
-                                     if(typeof options[i] != "undefined"){
-                                     var marker = new L.PieChartMarker(new L.LatLng(data[0].lat,data[0].lng),
+                                };
+                          for(i=2011;i<2015;i++){
+                             if(typeof options[i] != "undefined"){
+                                var marker = new L.PieChartMarker(new L.LatLng(data[0].lat,data[0].lng),
                                      options[i]);
-                                     marker.on("click", function(e) {
+                                marker.on("click", function(e) {
                                      sidebar.hide();
                                      sidebar.setContent(e.layer.options.chartOptions[e.layer.options.key].text);
                                      sidebar.show();
                                      });
-                                     group.addLayer(marker);
-                                     }};
+                                group.addLayer(marker);
+                            }};
 
-                                     if (group.getLayers() != 0) {
+                            if (group.getLayers() != 0) {
                                      layerControl.addOverlay(group, data[0].full_name, {groupName : "Школы Москвы", expanded:true});
-                                     //console.log('Done ' + data[0].full_name);
-                                     }
-                                     map.fire('dataload');
-                                     }
-									else { map.fire('dataload');}});
-                }
+                               }
+						    map.fire('dataload');
+                           }	
+					else { map.fire('dataload');}
+					});
+             }
+			 else {
+				map.fire('dataload'); }
            
 	});
 
