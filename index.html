@@ -123,8 +123,7 @@
             var group = e.layer;
             var layers = group.getLayers();
 			map.fire('dataloading');
-            if(layers.length == 1 )
-                {   console.log(group);
+            if(layers.length == 1 )                {   
                     var url = 'https://intense-journey-6292.herokuapp.com/'+ layers[0].options.inn +'/';
                     group.clearLayers();
                     $.getJSON(url, function(data) {
@@ -219,7 +218,8 @@
                                      //console.log('Done ' + data[0].full_name);
                                      }
                                      map.fire('dataload');
-                                     }});
+                                     }
+									else { map.fire('dataload'); });
                 }
            
 	});
