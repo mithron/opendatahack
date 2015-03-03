@@ -138,14 +138,20 @@
                                     var date = data[0].suppliers[key].sign_date.split('-')[0];
                                     var dataColor = firmColor.evaluate(colorCounter);
                                     colorCounter = colorCounter + 10;
-                                    var text = "<p>&nbsp;</p><p>" + data[0].full_name + "</p><p>Контракт c " + data[0].suppliers[key].name + " на " + data[0].suppliers[key].summ + " рублей заключен в " + date + " году.</p> <p>Предмет контракта: " +data[0].suppliers[key].product_name + "</p>" + "<p>Адрес поставщика: " +data[0].suppliers[key].address + "</p><p>Расширенные сведения о контракте см. <a target='_blank' href='http://clearspending.ru/contract/"+data[0].suppliers[key].cont_id+"'>тут</a>.</p>" ;
+                                    var text = "<p>&nbsp;</p><h3>" + data[0].full_name + "</h3><p>Контракт c " + data[0].suppliers[key].name + " на " + data[0].suppliers[key].summ + " рублей заключен в " + date + " году.</p> <p>Предмет контракта: " +data[0].suppliers[key].product_name + "</p>" + "<p>Адрес поставщика: " +data[0].suppliers[key].address + "</p><p>Расширенные сведения о контракте см. <a target='_blank' href='http://clearspending.ru/contract/"+data[0].suppliers[key].cont_id+"'>тут</a>.</p>" ;
+									
+									var text2 = "Контракт c " + data[0].suppliers[key].name + " на " + data[0].suppliers[key].summ + " рублей заключен в " + date + " году.";
+									
+									var audio2 = '<audio src=' +"'" +'http://tts.voicetech.yandex.net/generate?text=%27' + data[0].full_name + " Контракт c " + data[0].suppliers[key].name + " на " + data[0].suppliers[key].summ + " рублей заключен в " + date + " году.%27" + '&format=mp3&lang=ru-RU&speaker=zahar&key=519d3768-9302-4f28-8eab-0eb1bf9579d5'+ "'" + ' autoplay="autoplay" type="audio/mp3" preload="none"></audio></div>';
+									
+									text2 = audio2+text2;
 
                                     var dataWeight = lineWeight.evaluate(data[0].suppliers[key].summ);
                                     var dataOffset = diagOffset.evaluate(date);
 
-									var audio = '<audio src="http://tts.voicetech.yandex.net/generate?text=' +"'" + data[0].full_name + "%20Контракт%20c%20" + data[0].suppliers[key].name + "%20на%20" + data[0].suppliers[key].summ + "%20рублей%20заключен%20в " + date + "%20году.%20Предмет контракта:%20" +data[0].suppliers[key].product_name + "%20Адрес%20поставщика:%20" +data[0].suppliers[key].address +"'" +'&format=mp3&lang=ru-RU&speaker=zahar&key=519d3768-9302-4f28-8eab-0eb1bf9579d5" autoplay="autoplay" type="audio/mp3" preload="none"></audio></div>';
-                        			text = audio + text;
-
+									var audio = '<audio src=' +"'" +'http://tts.voicetech.yandex.net/generate?text=%27' + data[0].full_name + " Контракт c " + data[0].suppliers[key].name + " на " + data[0].suppliers[key].summ + " рублей заключен в " + date + " году. Предмет контракта: " +data[0].suppliers[key].product_name + " Адрес поставщика: " +data[0].suppliers[key].address +"%27" +'&format=mp3&lang=ru-RU&speaker=zahar&key=519d3768-9302-4f28-8eab-0eb1bf9579d5'+ "'" + ' autoplay="autoplay" type="audio/mp3" preload="none"></audio></div>';
+									text = audio + text;
+									
                                     if(typeof options[date] != "undefined"){
                                         options[date].data["'" + data[0].suppliers[key].name+ "'"] = 							data[0].suppliers[key].summ;
                                         options[date].chartOptions["'"+ data[0].suppliers[key].name+ "'"] =
@@ -184,7 +190,7 @@
                                         fillColor: dataColor,
                                         color: dataColor,
                                         weight: dataWeight, displayText: text });
-                                    arcedPolyline.bindPopup(text, {autoPanPadding: L.point(300, 200) });
+                                    arcedPolyline.bindPopup(text2, {autoPanPadding: L.point(300, 200) });
                                     arcedPolyline.on("click", function(e) {
                                         e.target.openPopup();
                                     });

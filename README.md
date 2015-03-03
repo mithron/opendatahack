@@ -1,9 +1,4 @@
-# opendatahack
-#odd15 Moscow hackathon Moscow schools suppliers map
+# Расходы школ Москвы
 
-Extremely unstable. Consumes ALL of your memory. Loads for eternity.
-But we are working on it...
-
-
-If you still want to see it, go http://mithron.github.io/opendatahack/ or http://schools.mithron.me
+If you want to see it, go http://schools.mithron.me .
 
