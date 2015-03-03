@@ -143,9 +143,9 @@
                                     var dataWeight = lineWeight.evaluate(data[0].suppliers[key].summ);
                                     var dataOffset = diagOffset.evaluate(date);
 
-									var audio = '<audio src="http://tts.voicetech.yandex.net/generate?text=' +"'" + data[0].full_name + "%20Контракт%20c%20" + data[0].suppliers[key].name + "%20на%20" + data[0].suppliers[key].summ + "%20рублей%20заключен%20в " + date + "%20году.%20Предмет контракта:%20" +data[0].suppliers[key].product_name + "%20Адрес%20поставщика:%20" +data[0].suppliers[key].address +"'" +'&format=mp3&lang=ru-RU&speaker=zahar&key=519d3768-9302-4f28-8eab-0eb1bf9579d5" autoplay="autoplay" type="audio/mp3" preload="none"></audio></div>';
-                        			text = audio + text;
-
+									var audio = '<audio src=' +"'" +'http://tts.voicetech.yandex.net/generate?text=%27' + data[0].full_name + " Контракт c " + data[0].suppliers[key].name + " на " + data[0].suppliers[key].summ + " рублей заключен в " + date + " году. Предмет контракта: " +data[0].suppliers[key].product_name + " Адрес поставщика: " +data[0].suppliers[key].address +"%27" +'&format=mp3&lang=ru-RU&speaker=zahar&key=519d3768-9302-4f28-8eab-0eb1bf9579d5'+ "'" + ' autoplay="autoplay" type="audio/mp3" preload="none"></audio></div>';
+									text = audio + text;
+									
                                     if(typeof options[date] != "undefined"){
                                         options[date].data["'" + data[0].suppliers[key].name+ "'"] = 							data[0].suppliers[key].summ;
                                         options[date].chartOptions["'"+ data[0].suppliers[key].name+ "'"] =
