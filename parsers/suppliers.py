@@ -1,4 +1,3 @@
-
 #encoding: utf8
 
 """
@@ -16,7 +15,6 @@ import unirest
 from collections import OrderedDict
 import json
 import httplib2
-import codecs
 import csvkit
 from urllib import urlencode
 import io
@@ -51,6 +49,45 @@ cust_ask_fields = 'returnfields'
 cust_ret_fields = '[suppliers,products,price,signDate,regNum]'
 
 
+def get_all_suppliers_for_refine():
+    data = json.load(open('schools_buh_data-csv.txt')).get('rows')
+    errors = []
+    with io.open("log.txt", "w", encoding='utf8') as log_file:
+        with io.open("schools-suppliers.json", "w", encoding='utf8') as result_file:
+            result_file.write(u"[")
+            for i, row in enumerate(data):
+                print("Going for %s" % str(i))
+                try:
+                    response = unirest.get(("https://clearspending.p.mashape.com/v1/"
+                                        "contracts/select/?customerinn={0}&perpage=500").format(row['inn']),
+                                        headers=headers)
+
+                except:
+                    try:
+                        ask= urlencode({cont_ask_name: row['full_name'].encode('utf-8'), cont_ask_fields: cont_ret_fields})
+                        response = unirest.get((cont_mashape_url+ask),headers=headers)
+                    except:
+                        errors.append(format(row['inn']))
+                        print(row['inn'])
+                        log_file.write(json.dumps(row, ensure_ascii=False, encoding='utf8' ))
+                        continue
+                if type(response.body) != dict:
+                    print(response.body)
+                    errors.append(format(row['inn']))
+                    print(row['inn'])
+                    log_file.write(json.dumps(row, ensure_ascii=False, encoding='utf8' ))
+                    continue
+                else:
+                    result_file.write(json.dumps(response.body, ensure_ascii=False, encoding='utf8'))
+                if (i + 1) < len(data):
+                    result_file.write(u', ')
+            result_file.write(u"]")
+    print("Errors: %s" % str(len(errors)))
+    print("Failed inns: %s" % unicode(", \n".join(errors)))
+
+
+get_all_suppliers_for_refine()
+
 def load_schools():
     data = json.load(open('schools_buh_data-csv.txt')).get('rows')
     with io.open("schools-suppliers.txt", "w", encoding='utf8') as result_file:
@@ -72,7 +109,6 @@ def load_schools():
                 print response.body
                 continue
             for contract in response.body['contracts']['data']:
-                }
                 sup_inn = contract['suppliers']['supplier']['inn']
                 if sup_inn in suppliers:
                     suppliers[sup_inn]['summ'] += contract['price']
@@ -85,7 +121,7 @@ def load_schools():
                         'inn': sup_inn,
                         'cont_id': contract['regNum'],
                         'kpp': contract['suppliers']['supplier'].get('kpp'),
-                        'name': contract['suppliers']['supplier'].get('organizationName'),,
+                        'name': contract['suppliers']['supplier'].get('organizationName'),
                         'address_ur': contract['suppliers']['supplier'].get('postAddress'),
                         'address_fact':contract['suppliers']['supplier'].get('factualAddress')
                         }
@@ -121,4 +157,4 @@ def load_schools():
                 result_file.write(u', ')
         result_file.write(u"]")
 
-load_schools()
+
