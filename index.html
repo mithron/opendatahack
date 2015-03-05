@@ -22,7 +22,7 @@
     <script src="Leaflet.loading/src/Control.Loading.js"></script>
 	
 	<link rel="stylesheet" href="Leaflet.label/dist/leaflet.label.css" />
-    <script src="Leaflet.label/dist/leaflet.label.js"></script>
+    <script async="async" src="Leaflet.label/dist/leaflet.label.js"></script>
 	
 	<script src="spin.min.js"></script>
 	
@@ -152,7 +152,7 @@
                                     var date = data[0].suppliers[key].sign_date.split('-')[0];
                                     var dataColor = firmColor.evaluate(colorCounter);
                                     colorCounter = colorCounter + 10;
-                                    var text = "<p>&nbsp;</p><p>" + data[0].full_name + "</p><p>Контракт c " + data[0].suppliers[key].name + " на " + data[0].suppliers[key].summ + " рублей заключен в " + date + " году.</p> <p>Предмет контракта: " +data[0].suppliers[key].product_name + "</p>" + "<p>Адрес поставщика: " +data[0].suppliers[key].address + "</p><p>Расширенные сведения о контракте см. <a target='_blank' href='http://clearspending.ru/contract/"+data[0].suppliers[key].cont_id+"'>тут</a>.</p>" ;
+                                    var text = "<p>&nbsp;</p><h3>" + data[0].full_name + "</h3><p>Контракт c " + data[0].suppliers[key].name + " на " + data[0].suppliers[key].summ + " рублей заключен в " + date + " году.</p> <p>Предмет контракта: " +data[0].suppliers[key].product_name + "</p>" + "<p>Адрес поставщика: " +data[0].suppliers[key].address + "</p><p>Расширенные сведения о контракте см. <a target='_blank' href='http://clearspending.ru/contract/"+data[0].suppliers[key].cont_id+"'>тут</a>.</p>" ;
 
                                     var dataWeight = lineWeight.evaluate(data[0].suppliers[key].summ);
                                     var dataOffset = diagOffset.evaluate(date);
