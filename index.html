@@ -10,8 +10,7 @@
 
     <link rel="stylesheet" href="leaflet-dvf/dist/css/dvf.css" type="text/css" />
     <script type="text/javascript" src="leaflet-dvf/dist/leaflet-dvf.min.js"></script>
-    <script type="text/javascript" src="leaflet-dvf/src/leaflet.dvf.experimental.js"></script>
-
+ 
     <link rel="stylesheet" href="Leaflet.StyledLayerControl/css/styledLayerControl.css" />
     <script src="Leaflet.StyledLayerControl//src/styledLayerControl.js"></script>
 	
@@ -20,6 +19,9 @@
 	
 	<link rel="stylesheet" href="Leaflet.loading/src/Control.Loading.css" />
     <script src="Leaflet.loading/src/Control.Loading.js"></script>
+	
+	<link rel="stylesheet" href="Leaflet.label/dist/leaflet.label.css" />
+    <script async="async" src="Leaflet.label/dist/leaflet.label.js"></script>
 	
 	<script src="spin.min.js"></script>
 	
@@ -82,6 +84,17 @@
                 });
     map.addControl(loadingControl);
 	map.fire("dataloading");
+	
+	var invisibleIcon = L.icon({
+			iconUrl: 'transparent.png',
+			shadowUrl: 'transparent.png',
+			iconSize:     [1, 1], // size of the icon
+			shadowSize:   [1, 1], // size of the shadow
+			iconAnchor:   [0, 0], // point of the icon which will correspond to marker's location
+			shadowAnchor: [0, 0],  // the same for the shadow
+			popupAnchor:  [0, 0], // point from which the popup should open relative to the iconAnchor
+			labelAnchor:  [1,1]
+});
 	
 	var sidebar = L.control.sidebar('sidebar', {
             closeButton: true,
@@ -216,6 +229,8 @@
                                      sidebar.show();
                                      });
                                 group.addLayer(marker);
+								var hiddenMarker = new L.Marker(new L.LatLng(data[0].lat,data[0].lng), {icon: invisibleIcon}).bindLabel(i + " год", {noHide: true, offset: [diagOffset.evaluate(i)-33, 40]});
+								group.addLayer(hiddenMarker);
                             }};
 
                             if (group.getLayers() != 0) {
