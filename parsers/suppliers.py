@@ -49,6 +49,23 @@ cust_ask_fields = 'returnfields'
 cust_ret_fields = '[suppliers,products,price,signDate,regNum]'
 
 
+def get_contract(ask_name, ask_value, ret_fields):
+    ask= urlencode({ask_name: ask_value.encode('utf-8'), 'returnfields': ret_fields})
+    response = unirest.get((cont_mashape_url+ask), headers=headers)
+    return response
+
+def get_contract_by_inn(inn, ret_fields):
+    return get_contract('customerinn', inn, ret_fields)
+
+def get_contract_by_name(name, ret_fields):
+    return get_contract('name', name, ret_fields)
+
+def get_contract_by_likeness(name, ret_fields):
+    return get_contract('namesearch', name, ret_fields)
+
+def callback_func(response):
+    return true
+
 def get_all_suppliers_for_refine():
     data = json.load(open('schools_buh_data-csv.txt')).get('rows')
     errors = []
@@ -57,15 +74,31 @@ def get_all_suppliers_for_refine():
             result_file.write(u"[")
             for i, row in enumerate(data):
                 print("Going for %s" % str(i))
-                try:
-                    response = unirest.get(("https://clearspending.p.mashape.com/v1/"
-                                        "contracts/select/?customerinn={0}&perpage=500").format(row['inn']),
-                                        headers=headers)
-
-                except:
+                if row['inn']:
                     try:
-                        ask= urlencode({cont_ask_name: row['full_name'].encode('utf-8'), cont_ask_fields: cont_ret_fields})
-                        response = unirest.get((cont_mashape_url+ask),headers=headers)
+                        print("getting by inn")
+                        ask = urlencode({'customerinn': row['inn'].encode('utf-8'),
+                                        cont_ask_fields: cont_ret_fields})
+                        response = unirest.get((cont_mashape_url+ask), headers=headers)
+                        print(response.code)
+                        if type(response.body) != dict:
+                            print("getting by name")
+                            ask = urlencode({cont_ask_name: row['full_name'].encode('utf-8'),
+                                            cont_ask_fields: cont_ret_fields})
+                            response = unirest.get((cont_mashape_url+ask), headers=headers)
+                            print(response.code)
+                    except:
+                        errors.append(format(row['inn']))
+                        print(row['inn'])
+                        log_file.write(json.dumps(row, ensure_ascii=False, encoding='utf8'))
+                        continue
+                else:
+                    try:
+                        print("getting by name")
+                        ask = urlencode({cont_ask_name: row['full_name'].encode('utf-8'),
+                                        cont_ask_fields: cont_ret_fields})
+                        response = unirest.get((cont_mashape_url+ask), headers=headers)
+                        print(response.code)
                     except:
                         errors.append(format(row['inn']))
                         print(row['inn'])
@@ -83,6 +116,7 @@ def get_all_suppliers_for_refine():
                     result_file.write(u', ')
             result_file.write(u"]")
     print("Errors: %s" % str(len(errors)))
+
     print("Failed inns: %s" % unicode(", \n".join(errors)))
 
 
