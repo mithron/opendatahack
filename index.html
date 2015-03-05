@@ -226,5 +226,25 @@
 	});
 
 	map.fire("dataload");
+
+    // as of http://stackoverflow.com/questions/11582512/how-to-get-url-parameters-with-javascript/11582513#11582513
+
+    function getURLParameter(name) {
+        return decodeURIComponent((new RegExp('[?|&]' + name + '=' + '([^&;]+?)(&|#|;|$)').exec(location.search)||[,""])[1].replace(/\+/g, '%20'))||null
+    }
+
+    var schoolINN = getURLParameter('school').split('/')[0];
+    if (schoolINN != null) {
+        for(var key in layerControl._layers) {
+            if (layerControl._layers.hasOwnProperty(key)) {
+                if(layerControl._layers[key].layer._layers[key-1].options.inn == schoolINN) {
+                    layerControl._layers[key].layer.addTo(map);
+                }
+            }
+        }
+    }
+
+
+
 	</script>
 </body></html>
