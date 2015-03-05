@@ -21,13 +21,13 @@
     <script src="Leaflet.loading/src/Control.Loading.js"></script>
 	
 	<link rel="stylesheet" href="Leaflet.label/dist/leaflet.label.css" />
-    <script async="async" src="Leaflet.label/dist/leaflet.label.js"></script>
+    <script src="Leaflet.label/dist/leaflet.label.js"></script>
 	
 	<script src="spin.min.js"></script>
 	
 </head>
 <body>
-	<div id="hidden"><audio src="http://tts.voicetech.yandex.net/generate?text='Здравствуйте%20%20%20Перед%20вами%20%20справочник%20по%20расходам%20московских%20школ%20%20%20Здесь%20представлены%20расходы%20лучших%20школ%20Москвы%20%20тех%20школ%20%20которые%20входили%20хотя%20бы%20раз%20в%20список%20что%20выпускается%20ежегожно%20Департаментом%20Образования%20Москвы%20%20%20Пока%20что%20загружаются%20данные%20немного%20об%20этом%20инструменте%20%20В%20правой%20панели%20Вы%20можете%20выбрать%20те%20школы%20которые%20вас%20интересуют%20Они%20будут%20представлены%20на%20карте%20У%20выбранных%20школ%20будет%20отображена%20круговая%20диаграмма%20расходов%20%20%20На%20диаграмме%20пропорционально%20сумме%20отображены%20контакты,%20при%20наведении%20мышки%20на%20них%20во%20всплывающем%20окне%20показана%20сумма%20и%20поставщик%2%20%200Школы%20линиями%20соединены%20с%20поставщиками%20%20%20Толщина%20линии%20пропорциональна%20сумме%20контракта%20Если%20кликнуть%20линию%20то%20будет%20показано%20местоположение%20поставщика%20и%20его%20название%20%20%20Цвет%20индивидуально%20идентифицирует%20поставщика%20%20%20Цвет%20на%20круговой%20диаграмме%20и%20линии%20совпадает'&format=mp3&lang=ru-RU&speaker=zahar&key=519d3768-9302-4f28-8eab-0eb1bf9579d5" autoplay="autoplay" type="audio/mp3" preload="none"></audio></div>
+	<div id="hidden"><audio id="instrPlayer" src="http://tts.voicetech.yandex.net/generate?text='Здравствуйте%20%20%20Перед%20вами%20%20справочник%20по%20расходам%20московских%20школ%20%20%20Здесь%20представлены%20расходы%20лучших%20школ%20Москвы%20%20тех%20школ%20%20которые%20входили%20хотя%20бы%20раз%20в%20список%20что%20выпускается%20ежегожно%20Департаментом%20Образования%20Москвы%20%20%20Пока%20что%20загружаются%20данные%20немного%20об%20этом%20инструменте%20%20В%20правой%20панели%20Вы%20можете%20выбрать%20те%20школы%20которые%20вас%20интересуют%20Они%20будут%20представлены%20на%20карте%20У%20выбранных%20школ%20будет%20отображена%20круговая%20диаграмма%20расходов%20%20%20На%20диаграмме%20пропорционально%20сумме%20отображены%20контакты,%20при%20наведении%20мышки%20на%20них%20во%20всплывающем%20окне%20показана%20сумма%20и%20поставщик%2%20%200Школы%20линиями%20соединены%20с%20поставщиками%20%20%20Толщина%20линии%20пропорциональна%20сумме%20контракта%20Если%20кликнуть%20линию%20то%20будет%20показано%20местоположение%20поставщика%20и%20его%20название%20%20%20Цвет%20индивидуально%20идентифицирует%20поставщика%20%20%20Цвет%20на%20круговой%20диаграмме%20и%20линии%20совпадает'&format=mp3&lang=ru-RU&speaker=zahar&key=519d3768-9302-4f28-8eab-0eb1bf9579d5" autoplay="autoplay" type="audio/mp3" preload="none"></audio></div>
 	
 	<div id="sidebar">
 		<h1>Здравствуйте!</h1>		
@@ -121,7 +121,19 @@
 							else { this.options.oddity = 1; return value ;}							
 							}
 						});
-	
+
+    function stopAudio(id)  {
+        if(document.getElementById('instrPlayer') != null && id != 'instrPlayer' ) {
+            document.getElementById('instrPlayer').pause();
+            }
+        if(document.getElementById('sidebarPlayer') != null && id != 'sidebarPlayer') {
+            document.getElementById('sidebarPlayer').pause();
+        }
+        if(document.getElementById('popupPlayer') != null && id != 'popupPlayer') {
+            document.getElementById('popupPlayer').pause();
+        }
+        document.getElementById(id).play();
+    }
 	
 	for(var i=0; i<schoolData.length; i++) {
     // for(var i=0; i<10; i++) {
@@ -151,18 +163,18 @@
                                     var date = data[0].suppliers[key].sign_date.split('-')[0];
                                     var dataColor = firmColor.evaluate(colorCounter);
                                     colorCounter = colorCounter + 10;
-                                    var text = "<p>&nbsp;</p><h3>" + data[0].full_name + "</h3><p>Контракт c " + data[0].suppliers[key].name + " на " + data[0].suppliers[key].summ + " рублей заключен в " + date + " году.</p> <p>Предмет контракта: " +data[0].suppliers[key].product_name + "</p>" + "<p>Адрес поставщика: " +data[0].suppliers[key].address + "</p><p>Расширенные сведения о контракте см. <a target='_blank' href='http://clearspending.ru/contract/"+data[0].suppliers[key].cont_id+"'>тут</a>.</p>" ;
+                                    var text = "<p>&nbsp;</p><h3><a href='http://schools.mithron.me/?school=" + data[0].inn + "'>" + data[0].full_name + "</a></h3><p>Контракт c " + data[0].suppliers[key].name + " на " + data[0].suppliers[key].summ + " рублей заключен в " + date + " году.</p> <p>Предмет контракта: " +data[0].suppliers[key].product_name + "</p>" + "<p>Адрес поставщика: " +data[0].suppliers[key].address + "</p><p>Расширенные сведения о контракте см. <a target='_blank' href='http://clearspending.ru/contract/"+data[0].suppliers[key].cont_id+"'>тут</a>.</p>" ;
 									
 									var text2 = "Контракт c " + data[0].suppliers[key].name + " на " + data[0].suppliers[key].summ + " рублей заключен в " + date + " году.";
 									
-									var audio2 = '<audio src=' +"'" +'http://tts.voicetech.yandex.net/generate?text=%27' + data[0].full_name + " Контракт c " + data[0].suppliers[key].name + " на " + data[0].suppliers[key].summ + " рублей заключен в " + date + " году.%27" + '&format=mp3&lang=ru-RU&speaker=zahar&key=519d3768-9302-4f28-8eab-0eb1bf9579d5'+ "'" + ' autoplay="autoplay" type="audio/mp3" preload="none"></audio></div>';
+									var audio2 = '<audio id="popupPlayer" src=' +"'" +'http://tts.voicetech.yandex.net/generate?text=%27' + data[0].full_name + " Контракт c " + data[0].suppliers[key].name + " на " + data[0].suppliers[key].summ + " рублей заключен в " + date + " году.%27" + '&format=mp3&lang=ru-RU&speaker=zahar&key=519d3768-9302-4f28-8eab-0eb1bf9579d5'+ "'" + ' autoplay="autoplay" type="audio/mp3" preload="none"></audio></div>';
 									
 									text2 = audio2+text2;
 
                                     var dataWeight = lineWeight.evaluate(data[0].suppliers[key].summ);
                                     var dataOffset = diagOffset.evaluate(date);
 
-									var audio = '<audio src=' +"'" +'http://tts.voicetech.yandex.net/generate?text=%27' + data[0].full_name + " Контракт c " + data[0].suppliers[key].name + " на " + data[0].suppliers[key].summ + " рублей заключен в " + date + " году. Предмет контракта: " +data[0].suppliers[key].product_name + " Адрес поставщика: " +data[0].suppliers[key].address +"%27" +'&format=mp3&lang=ru-RU&speaker=zahar&key=519d3768-9302-4f28-8eab-0eb1bf9579d5'+ "'" + ' autoplay="autoplay" type="audio/mp3" preload="none"></audio></div>';
+									var audio = '<audio id="sidebarPlayer" src=' +"'" +'http://tts.voicetech.yandex.net/generate?text=%27' + data[0].full_name + " Контракт c " + data[0].suppliers[key].name + " на " + data[0].suppliers[key].summ + " рублей заключен в " + date + " году. Предмет контракта: " +data[0].suppliers[key].product_name + " Адрес поставщика: " +data[0].suppliers[key].address +"%27" +'&format=mp3&lang=ru-RU&speaker=zahar&key=519d3768-9302-4f28-8eab-0eb1bf9579d5'+ "'" + ' autoplay="autoplay" type="audio/mp3" preload="none"></audio></div>';
 									text = audio + text;
 									
                                     if(typeof options[date] != "undefined"){
@@ -204,9 +216,15 @@
                                         color: dataColor,
                                         weight: dataWeight, displayText: text });
                                     arcedPolyline.bindPopup(text2, {autoPanPadding: L.point(300, 200) });
+
                                     arcedPolyline.on("click", function(e) {
                                         e.target.openPopup();
                                     });
+
+                                    arcedPolyline.on("popupopen", function(e) {
+                                        stopAudio('popupPlayer');
+                                    });
+
                                     arcedPolyline.on("popupclose", function(e) {
                                         map.setView([55.75, 37.63], 10);
                                     });
@@ -226,7 +244,9 @@
                                 marker.on("click", function(e) {
                                      sidebar.hide();
                                      sidebar.setContent(e.layer.options.chartOptions[e.layer.options.key].text);
+                                     stopAudio('sidebarPlayer');
                                      sidebar.show();
+
                                      });
                                 group.addLayer(marker);
 								var hiddenMarker = new L.Marker(new L.LatLng(data[0].lat,data[0].lng), {icon: invisibleIcon}).bindLabel(i + " год", {noHide: true, offset: [diagOffset.evaluate(i)-33, 40]});
