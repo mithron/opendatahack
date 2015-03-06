@@ -229,7 +229,7 @@
                             }};
 
                             if (group.getLayers() != 0) {
-									 var hiddenMarker = new L.Marker(new L.LatLng(data[0].lat,data[0].lng), {icon: invisibleIcon}).bindLabel(" " + data[0].full_name, {noHide: true, offset: [-200, -70], direction: 'auto'});
+									 var hiddenMarker = new L.Marker(new L.LatLng(data[0].lat,data[0].lng), {icon: invisibleIcon}).bindLabel("<a href='http://schools.mithron.me/?school=" + data[0].inn +"'>"+ data[0].full_name + "</a>", { clickable:true, noHide: true, offset: [-200, -70], direction: 'auto'});
 									 group.addLayer(hiddenMarker);
                                      layerControl.addOverlay(group, data[0].full_name, {groupName : "Школы Москвы", expanded:true});
                                }
