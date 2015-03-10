@@ -2,6 +2,15 @@
 <head>
 	<title>Московские школы</title>
 	<meta charset="utf-8">
+	<meta property="og:title" content="Расходы школ Москвы"/>
+    <meta property="og:type" content="website"/>
+    <meta property="og:url" content="http://schools.mithron.me"/>
+    <meta property="og:image" content="http://schools.mithron.me/project-cover2.png"/>
+    <meta property="og:site_name" content="Расходы школ Москвы"/>
+    <meta property="og:description"
+         content="Посмотрите, сколько и кому платят школы Москвы. Удобная визуализация и возможности сравнения.
+          <a href='http://budgetapps.ru/contest#projects'>Проголосуйте за сайт тут(до 17 марта)</a>."/>
+
 	
 	<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.css" />
 	<script src="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js"></script>
@@ -254,6 +263,8 @@
                             }};
 
                             if (group.getLayers() != 0) {
+									 var hiddenMarker = new L.Marker(new L.LatLng(data[0].lat,data[0].lng), {icon: invisibleIcon}).bindLabel("<a href='http://schools.mithron.me/?school=" + data[0].inn +"'>"+ data[0].full_name + "</a>", { clickable:true, noHide: true, offset: [-200, -70], direction: 'auto'});
+									 group.addLayer(hiddenMarker);
                                      layerControl.addOverlay(group, data[0].full_name, {groupName : "Школы Москвы", expanded:true});
                                }
 						    map.fire('dataload');
