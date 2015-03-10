@@ -291,7 +291,8 @@
     function getURLParameter(name) {
         return decodeURIComponent((new RegExp('[?|&]' + name + '=' + '([^&;]+?)(&|#|;|$)').exec(location.search)||[,""])[1].replace(/\+/g, '%20'))||null
     }
-
+	
+if (getURLParameter('school') != null) {	
     var schoolINN = getURLParameter('school').split('/')[0];
     if (schoolINN != null) {
         for(var key in layerControl._layers) {
@@ -302,7 +303,7 @@
             }
         }
     }
-
+}
 
 
 	</script>
