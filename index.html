@@ -187,6 +187,7 @@
 				if (layerControl._layers.hasOwnProperty(key)) {
 					if(layerControl._layers[key].layer._layers[key-1].options.inn == schoolINN) {
 						layerControl._layers[key].layer.addTo(map);
+						layerControl.fire('overlayadd', layerControl._layers[key].layer);
 					}
 				}
 			}
