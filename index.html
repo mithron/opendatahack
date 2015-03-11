@@ -56,6 +56,7 @@
 	
 	<script src="school_data_short.min.js"></script>
     <script src="global.js"></script>
+	<script src="ajax.js"></script>
 	<script>
 	var map;	
 	
@@ -132,11 +133,11 @@
 				if (layerControl._layers.hasOwnProperty(key)) {
 					if(layerControl._layers[key].layer._layers[key-1].options.inn == schoolINN) {
 						layerControl._layers[key].layer.addTo(map);
+						onOverlayAdd(layerControl._layers[key]);
 					}
 				}
 			}
 		}
 	}
-	</script>
-	<script src="ajax.js"></script>
+	</script>	
 </body></html>

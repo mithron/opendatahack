@@ -15,8 +15,8 @@
 							}
 						});
 						
-    map.on("overlayadd", function(e) {
-            var group = e.layer;
+	function onOverlayAdd(e) {
+			var group = e.layer;
             var layers = group.getLayers();
 			map.fire('dataloading');
             if(layers.length == 1 ) {   
@@ -127,7 +127,7 @@
 
                             if (group.getLayers() != 0) {
 									 var hiddenMarker = new L.Marker(new L.LatLng(data[0].lat,data[0].lng), {icon: invisibleIcon}).bindLabel("<a href='http://schools.mithron.me/?school=" + data[0].inn +"'>"+ data[0].full_name + "</a>", { clickable:true, noHide: true, offset: [labelOffset.evaluate(data[0].full_name.length), -70], direction: 'right'});
-									 var hiddenMarker2 = new L.Marker(new L.LatLng(data[0].lat,data[0].lng), {icon: invisibleIcon}).bindLabel("Поделиться:&nbsp; <a target='_blank' href='https://vk.com/share.php?url=http://schools.mithron.me/?school="+ data[0].inn +"'> <i class='fa fa-vk'></i></a> &nbsp;&nbsp; <a target='_blank' href='https://www.facebook.com/sharer.php?u=http://schools.mithron.me/?school="+ data[0].inn +"'> <i class='fa fa-facebook-square'></i></a> &nbsp;&nbsp; <a target='_blank' href='http://twitter.com/intent/tweet?url=http://schools.mithron.me/?school="+ data[0].inn +"&text=Cколько кому платят школы Москвы. Проголосуйте http://budgetapps.ru/contest%23projects'> <i class='fa fa-twitter-square'></i></a> ", { clickable:true, noHide: true, offset: [-72, 72], direction: 'right'});
+									 var hiddenMarker2 = new L.Marker(new L.LatLng(data[0].lat,data[0].lng), {icon: invisibleIcon}).bindLabel("Поделиться:&nbsp; <a target='_blank' href='https://vk.com/share.php?url=http://schools.mithron.me/?school="+ data[0].inn +"'> <i class='fa fa-vk'></i></a> &nbsp;&nbsp; <a target='_blank' href='https://www.facebook.com/sharer.php?u=http://schools.mithron.me/?school="+ data[0].inn +"'> <i class='fa fa-facebook-square'></i></a> &nbsp;&nbsp; <a target='_blank' href='http://twitter.com/intent/tweet?url=http://schools.mithron.me/?school="+ data[0].inn +"&text=Cколько кому платят школы Москвы. Расходы школ Москвы. Проголосуйте  http://budgetapps.ru/contest%23projects'> <i class='fa fa-twitter-square'></i></a> ", { clickable:true, noHide: true, offset: [-72, 72], direction: 'right'});
 									 group.addLayer(hiddenMarker);
 									 group.addLayer(hiddenMarker2);       								
                                }
@@ -140,6 +140,7 @@
 			 else {
 				map.fire('dataload'); }
            
-	});
+	}
+    map.on("overlayadd", function(e) { onOverlayAdd(e);} );
 
 	map.fire("dataload");
